@@ -1,5 +1,6 @@
 import { getAuthToken } from './api/token'
 import Categories from './pages/Categories'
+import CategoryQuestions from './pages/CategoryQuestions'
 import Dashboard from './pages/Dashboard'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -43,6 +44,16 @@ function App() {
     }
 
     return <Categories />
+  }
+
+  if (path.startsWith('/categories/')) {
+    if (!hasToken) {
+      window.history.replaceState(null, '', '/login')
+      return <Login />
+    }
+
+    const categoryId = decodeURIComponent(path.replace('/categories/', ''))
+    return <CategoryQuestions categoryId={categoryId} />
   }
 
   if (hasToken) {

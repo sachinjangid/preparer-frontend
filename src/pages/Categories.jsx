@@ -251,9 +251,10 @@ function Categories() {
           categories.length > 0 ? (
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {categories.map((category) => (
-                <article
+                <a
                   key={category.categoryId}
-                  className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+                  href={`/categories/${category.categoryId}`}
+                  className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <h2 className="text-lg font-semibold text-slate-950">
@@ -263,7 +264,10 @@ function Categories() {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => handleEditClick(category)}
+                        onClick={(event) => {
+                          event.preventDefault()
+                          handleEditClick(category)
+                        }}
                         aria-label={`Edit ${category.name}`}
                         className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
                       >
@@ -285,7 +289,10 @@ function Categories() {
 
                       <button
                         type="button"
-                        onClick={() => handleDeleteClick(category)}
+                        onClick={(event) => {
+                          event.preventDefault()
+                          handleDeleteClick(category)
+                        }}
                         disabled={deletingCategoryId === category.categoryId}
                         aria-label={`Delete ${category.name}`}
                         className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
@@ -314,7 +321,7 @@ function Categories() {
                   <p className="mt-2 text-sm leading-6 text-slate-600">
                     {category.description}
                   </p>
-                </article>
+                </a>
               ))}
             </div>
           ) : (
