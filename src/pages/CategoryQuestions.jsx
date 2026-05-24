@@ -1,13 +1,61 @@
-import { useState } from 'react'
-import { createQuestion } from '../api/question'
+import { useEffect, useState } from 'react'
+import { createQuestion, getQuestionsByCategory } from '../api/question'
 import Navbar from '../components/Navbar'
+
+function formatDate(dateString) {
+  return new Intl.DateTimeFormat('en', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(dateString))
+}
 
 function CategoryQuestions({ categoryId }) {
   const categoryName = new URLSearchParams(window.location.search).get('name')
+  const [questions, setQuestions] = useState([])
   const [question, setQuestion] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [status, setStatus] = useState({ type: '', message: '' })
+
+  async function loadQuestions() {
+    setIsLoading(true)
+    setStatus({ type: '', message: '' })
+
+    try {
+      const questionList = await getQuestionsByCategory(categoryId)
+      setQuestions(questionList)
+    } catch (error) {
+      setStatus({ type: 'error', message: error.message })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    let shouldUpdate = true
+
+    getQuestionsByCategory(categoryId)
+      .then((questionList) => {
+        if (shouldUpdate) {
+          setQuestions(questionList)
+        }
+      })
+      .catch((error) => {
+        if (shouldUpdate) {
+          setStatus({ type: 'error', message: error.message })
+        }
+      })
+      .finally(() => {
+        if (shouldUpdate) {
+          setIsLoading(false)
+        }
+      })
+
+    return () => {
+      shouldUpdate = false
+    }
+  }, [categoryId])
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -15,12 +63,12 @@ function CategoryQuestions({ categoryId }) {
     setStatus({ type: '', message: '' })
 
     try {
-      await createQuestion({
+      await createQuestion(categoryId, {
         question,
-        categoryId,
       })
       setQuestion('')
       setIsFormOpen(false)
+      await loadQuestions()
       setStatus({ type: 'success', message: 'Question created successfully.' })
     } catch (error) {
       setStatus({ type: 'error', message: error.message })
@@ -124,11 +172,39 @@ function CategoryQuestions({ categoryId }) {
           </p>
         ) : null}
 
-        <div className="mt-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm text-slate-600">
-            Questions for this category will appear here.
+        {isLoading ? (
+          <p className="mt-8 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+            Loading questions...
           </p>
-        </div>
+        ) : null}
+
+        {!isLoading && status.type !== 'error' ? (
+          questions.length > 0 ? (
+            <div className="mt-8 space-y-4">
+              {questions.map((questionItem, index) => (
+                <article
+                  key={questionItem.questionId}
+                  className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+                >
+                  <p className="text-sm font-medium text-slate-500">
+                    Question {index + 1}
+                  </p>
+                  <h2 className="mt-2 text-lg font-semibold text-slate-950">
+                    {questionItem.question}
+                  </h2>
+                  <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500">
+                    <span>Created: {formatDate(questionItem.createdAt)}</span>
+                    <span>Updated: {formatDate(questionItem.updatedAt)}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-8 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+              No questions found.
+            </p>
+          )
+        ) : null}
       </section>
     </main>
   )
