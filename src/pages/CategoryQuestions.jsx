@@ -3,6 +3,7 @@ import { createQuestion } from '../api/question'
 import Navbar from '../components/Navbar'
 
 function CategoryQuestions({ categoryId }) {
+  const categoryName = new URLSearchParams(window.location.search).get('name')
   const [question, setQuestion] = useState('')
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -42,7 +43,7 @@ function CategoryQuestions({ categoryId }) {
               Back to categories
             </a>
             <h1 className="mt-3 text-3xl font-bold text-slate-950">
-              Questions
+              {categoryName ?? 'Questions'}
             </h1>
             <p className="mt-2 text-sm text-slate-500">
               Category ID: {categoryId}

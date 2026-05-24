@@ -253,7 +253,7 @@ function Categories() {
               {categories.map((category) => (
                 <a
                   key={category.categoryId}
-                  href={`/categories/${category.categoryId}`}
+                  href={`/categories/${category.categoryId}?name=${encodeURIComponent(category.name)}`}
                   className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
                 >
                   <div className="flex items-start justify-between gap-4">
