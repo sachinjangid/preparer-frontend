@@ -23,7 +23,7 @@ function Register() {
 
     try {
       await registerUser(formData)
-      setStatus({ type: 'success', message: 'Registration successful.' })
+      window.location.href = '/dashboard'
     } catch (error) {
       setStatus({ type: 'error', message: error.message })
     } finally {

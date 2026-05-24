@@ -22,7 +22,7 @@ function Login() {
 
     try {
       await loginUser(formData)
-      setStatus({ type: 'success', message: 'Login successful.' })
+      window.location.href = '/dashboard'
     } catch (error) {
       setStatus({ type: 'error', message: error.message })
     } finally {

@@ -1,9 +1,19 @@
+import { clearAuthToken, getAuthToken } from '../api/token'
+
 function Navbar() {
-  const navItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Login', href: '/login' },
-    { label: 'Register', href: '/register' },
-  ]
+  const isLoggedIn = Boolean(getAuthToken())
+  const navItems = isLoggedIn
+    ? [{ label: 'Dashboard', href: '/dashboard' }]
+    : [
+        { label: 'Home', href: '/' },
+        { label: 'Login', href: '/login' },
+        { label: 'Register', href: '/register' },
+      ]
+
+  function handleLogout() {
+    clearAuthToken()
+    window.location.href = '/login'
+  }
 
   return (
     <header className="border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -26,6 +36,15 @@ function Navbar() {
               {item.label}
             </a>
           ))}
+          {isLoggedIn ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="text-sm font-medium text-slate-600 transition hover:text-slate-950"
+            >
+              Logout
+            </button>
+          ) : null}
         </div>
       </nav>
     </header>
