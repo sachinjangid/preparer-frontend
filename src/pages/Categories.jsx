@@ -1,29 +1,141 @@
 import { useEffect, useState } from 'react'
-import { getAllCategories } from '../api/category'
+import {
+  createCategory,
+  deleteCategory,
+  getAllCategories,
+  updateCategory,
+} from '../api/category'
 import Navbar from '../components/Navbar'
+
+const emptyForm = {
+  name: '',
+  description: '',
+}
 
 function Categories() {
   const [categories, setCategories] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  const [deletingCategoryId, setDeletingCategoryId] = useState('')
   const [error, setError] = useState('')
+  const [formData, setFormData] = useState(emptyForm)
+  const [editingCategoryId, setEditingCategoryId] = useState('')
+  const [isFormOpen, setIsFormOpen] = useState(false)
+
+  async function loadCategories() {
+    setIsLoading(true)
+    setError('')
+
+    try {
+      const categoryList = await getAllCategories()
+      setCategories(categoryList)
+    } catch (loadError) {
+      setError(loadError.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
-    async function loadCategories() {
-      setIsLoading(true)
-      setError('')
+    let shouldUpdate = true
 
-      try {
-        const categoryList = await getAllCategories()
-        setCategories(categoryList)
-      } catch (loadError) {
-        setError(loadError.message)
-      } finally {
-        setIsLoading(false)
+    getAllCategories()
+      .then((categoryList) => {
+        if (shouldUpdate) {
+          setCategories(categoryList)
+        }
+      })
+      .catch((loadError) => {
+        if (shouldUpdate) {
+          setError(loadError.message)
+        }
+      })
+      .finally(() => {
+        if (shouldUpdate) {
+          setIsLoading(false)
+        }
+      })
+
+    return () => {
+      shouldUpdate = false
+    }
+  }, [])
+
+  function handleCreateClick() {
+    setFormData(emptyForm)
+    setEditingCategoryId('')
+    setError('')
+    setIsFormOpen(true)
+  }
+
+  function handleEditClick(category) {
+    setFormData({
+      name: category.name,
+      description: category.description,
+    })
+    setEditingCategoryId(category.categoryId)
+    setError('')
+    setIsFormOpen(true)
+  }
+
+  function handleCancelForm() {
+    setFormData(emptyForm)
+    setEditingCategoryId('')
+    setIsFormOpen(false)
+  }
+
+  function handleFormChange(event) {
+    const { name, value } = event.target
+    setFormData((currentData) => ({ ...currentData, [name]: value }))
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    setIsSaving(true)
+    setError('')
+
+    try {
+      if (editingCategoryId) {
+        await updateCategory(editingCategoryId, formData)
+      } else {
+        await createCategory(formData)
       }
+
+      await loadCategories()
+      handleCancelForm()
+    } catch (submitError) {
+      setError(submitError.message)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  async function handleDeleteClick(category) {
+    const shouldDelete = window.confirm(
+      `Delete "${category.name}" category? This cannot be undone.`,
+    )
+
+    if (!shouldDelete) {
+      return
     }
 
-    loadCategories()
-  }, [])
+    setDeletingCategoryId(category.categoryId)
+    setError('')
+
+    try {
+      await deleteCategory(category.categoryId)
+      setCategories((currentCategories) =>
+        currentCategories.filter(
+          (currentCategory) =>
+            currentCategory.categoryId !== category.categoryId,
+        ),
+      )
+    } catch (deleteError) {
+      setError(deleteError.message)
+    } finally {
+      setDeletingCategoryId('')
+    }
+  }
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
@@ -45,11 +157,83 @@ function Categories() {
 
           <button
             type="button"
+            onClick={handleCreateClick}
             className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
           >
             + Create New Category
           </button>
         </div>
+
+        {isFormOpen ? (
+          <form
+            onSubmit={handleSubmit}
+            className="mt-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+          >
+            <h2 className="text-lg font-semibold text-slate-950">
+              {editingCategoryId ? 'Edit Category' : 'Create Category'}
+            </h2>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Name
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={handleFormChange}
+                  required
+                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Description
+                </label>
+                <input
+                  id="description"
+                  name="description"
+                  type="text"
+                  value={formData.description}
+                  onChange={handleFormChange}
+                  required
+                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                />
+              </div>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+              >
+                {isSaving
+                  ? 'Saving...'
+                  : editingCategoryId
+                    ? 'Update Category'
+                    : 'Create Category'}
+              </button>
+              <button
+                type="button"
+                onClick={handleCancelForm}
+                disabled={isSaving}
+                className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : null}
 
         {isLoading ? (
           <p className="mt-8 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
@@ -79,6 +263,7 @@ function Categories() {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
+                        onClick={() => handleEditClick(category)}
                         aria-label={`Edit ${category.name}`}
                         className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
                       >
@@ -100,8 +285,10 @@ function Categories() {
 
                       <button
                         type="button"
+                        onClick={() => handleDeleteClick(category)}
+                        disabled={deletingCategoryId === category.categoryId}
                         aria-label={`Delete ${category.name}`}
-                        className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
+                        className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
