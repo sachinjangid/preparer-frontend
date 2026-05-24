@@ -1,4 +1,5 @@
 import { getAuthToken } from './api/token'
+import Categories from './pages/Categories'
 import Dashboard from './pages/Dashboard'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -33,6 +34,15 @@ function App() {
     }
 
     return <Dashboard />
+  }
+
+  if (path === '/categories') {
+    if (!hasToken) {
+      window.history.replaceState(null, '', '/login')
+      return <Login />
+    }
+
+    return <Categories />
   }
 
   if (hasToken) {
