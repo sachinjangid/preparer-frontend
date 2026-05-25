@@ -21,6 +21,19 @@ function Dashboard() {
               Click to view and manage your saved categories.
             </p>
           </a>
+
+          <a
+            href="/practice"
+            className="rounded-lg border border-slate-200 bg-white p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+          >
+            <p className="text-sm font-medium text-slate-500">Start</p>
+            <h2 className="mt-2 text-2xl font-bold text-slate-950">
+              Practice
+            </h2>
+            <p className="mt-3 text-sm text-slate-600">
+              Click to practice questions from your preparation set.
+            </p>
+          </a>
         </div>
       </section>
     </main>

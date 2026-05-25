@@ -1,9 +1,12 @@
 import { getAuthToken } from './api/token'
 import Categories from './pages/Categories'
 import CategoryQuestions from './pages/CategoryQuestions'
+import CategoryPractice from './pages/CategoryPractice'
 import Dashboard from './pages/Dashboard'
 import Home from './pages/Home'
 import Login from './pages/Login'
+import Practice from './pages/Practice'
+import RandomPractice from './pages/RandomPractice'
 import Register from './pages/Register'
 
 function App() {
@@ -35,6 +38,33 @@ function App() {
     }
 
     return <Dashboard />
+  }
+
+  if (path === '/practice') {
+    if (!hasToken) {
+      window.history.replaceState(null, '', '/login')
+      return <Login />
+    }
+
+    return <Practice />
+  }
+
+  if (path === '/practice/random') {
+    if (!hasToken) {
+      window.history.replaceState(null, '', '/login')
+      return <Login />
+    }
+
+    return <RandomPractice />
+  }
+
+  if (path === '/practice/category') {
+    if (!hasToken) {
+      window.history.replaceState(null, '', '/login')
+      return <Login />
+    }
+
+    return <CategoryPractice />
   }
 
   if (path === '/categories') {
