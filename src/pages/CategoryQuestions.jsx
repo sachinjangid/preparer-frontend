@@ -364,7 +364,7 @@ function CategoryQuestions({ categoryId }) {
                       </div>
                     </div>
 
-                    <h2 className="mt-2 text-lg font-semibold text-slate-950">
+                    <h2 className="mt-2 whitespace-pre-wrap text-lg font-semibold text-slate-950">
                       {questionItem.question}
                     </h2>
                     <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500">

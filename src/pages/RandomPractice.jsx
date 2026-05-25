@@ -51,7 +51,7 @@ function RandomPractice() {
                 <p className="text-sm font-medium text-slate-500">
                   Random Question
                 </p>
-                <h1 className="mt-3 text-2xl font-bold leading-9 text-slate-950">
+                <h1 className="mt-3 whitespace-pre-wrap text-2xl font-bold leading-9 text-slate-950">
                   {questionText || 'Question loaded.'}
                 </h1>
               </div>
