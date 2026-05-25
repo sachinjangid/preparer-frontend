@@ -19,6 +19,7 @@ function Categories() {
   const [deletingCategoryId, setDeletingCategoryId] = useState('')
   const [error, setError] = useState('')
   const [formData, setFormData] = useState(emptyForm)
+  const [editFormData, setEditFormData] = useState(emptyForm)
   const [editingCategoryId, setEditingCategoryId] = useState('')
   const [isFormOpen, setIsFormOpen] = useState(false)
 
@@ -64,23 +65,23 @@ function Categories() {
   function handleCreateClick() {
     setFormData(emptyForm)
     setEditingCategoryId('')
+    setEditFormData(emptyForm)
     setError('')
     setIsFormOpen(true)
   }
 
   function handleEditClick(category) {
-    setFormData({
+    setEditFormData({
       name: category.name,
       description: category.description,
     })
     setEditingCategoryId(category.categoryId)
     setError('')
-    setIsFormOpen(true)
+    setIsFormOpen(false)
   }
 
   function handleCancelForm() {
     setFormData(emptyForm)
-    setEditingCategoryId('')
     setIsFormOpen(false)
   }
 
@@ -89,20 +90,42 @@ function Categories() {
     setFormData((currentData) => ({ ...currentData, [name]: value }))
   }
 
+  function handleEditFormChange(event) {
+    const { name, value } = event.target
+    setEditFormData((currentData) => ({ ...currentData, [name]: value }))
+  }
+
+  function handleCancelEdit() {
+    setEditFormData(emptyForm)
+    setEditingCategoryId('')
+  }
+
   async function handleSubmit(event) {
     event.preventDefault()
     setIsSaving(true)
     setError('')
 
     try {
-      if (editingCategoryId) {
-        await updateCategory(editingCategoryId, formData)
-      } else {
-        await createCategory(formData)
-      }
+      await createCategory(formData)
 
       await loadCategories()
       handleCancelForm()
+    } catch (submitError) {
+      setError(submitError.message)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  async function handleEditSubmit(event) {
+    event.preventDefault()
+    setIsSaving(true)
+    setError('')
+
+    try {
+      await updateCategory(editingCategoryId, editFormData)
+      await loadCategories()
+      handleCancelEdit()
     } catch (submitError) {
       setError(submitError.message)
     } finally {
@@ -170,7 +193,7 @@ function Categories() {
             className="mt-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
           >
             <h2 className="text-lg font-semibold text-slate-950">
-              {editingCategoryId ? 'Edit Category' : 'Create Category'}
+              Create Category
             </h2>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -217,11 +240,7 @@ function Categories() {
                 disabled={isSaving}
                 className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
               >
-                {isSaving
-                  ? 'Saving...'
-                  : editingCategoryId
-                    ? 'Update Category'
-                    : 'Create Category'}
+                {isSaving ? 'Saving...' : 'Create Category'}
               </button>
               <button
                 type="button"
@@ -251,77 +270,145 @@ function Categories() {
           categories.length > 0 ? (
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {categories.map((category) => (
-                <a
-                  key={category.categoryId}
-                  href={`/categories/${category.categoryId}?name=${encodeURIComponent(category.name)}`}
-                  className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
-                >
-                  <div className="flex items-start justify-between gap-4">
+                editingCategoryId === category.categoryId ? (
+                  <form
+                    key={category.categoryId}
+                    onSubmit={handleEditSubmit}
+                    className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+                  >
                     <h2 className="text-lg font-semibold text-slate-950">
-                      {category.name}
+                      Edit Category
                     </h2>
 
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={(event) => {
-                          event.preventDefault()
-                          handleEditClick(category)
-                        }}
-                        aria-label={`Edit ${category.name}`}
-                        className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="h-4 w-4"
-                          aria-hidden="true"
+                    <div className="mt-4 space-y-4">
+                      <div>
+                        <label
+                          htmlFor={`category-name-${category.categoryId}`}
+                          className="block text-sm font-medium text-slate-700"
                         >
-                          <path d="M12 20h9" />
-                          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                        </svg>
-                      </button>
+                          Name
+                        </label>
+                        <input
+                          id={`category-name-${category.categoryId}`}
+                          name="name"
+                          type="text"
+                          value={editFormData.name}
+                          onChange={handleEditFormChange}
+                          required
+                          className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                        />
+                      </div>
 
+                      <div>
+                        <label
+                          htmlFor={`category-description-${category.categoryId}`}
+                          className="block text-sm font-medium text-slate-700"
+                        >
+                          Description
+                        </label>
+                        <input
+                          id={`category-description-${category.categoryId}`}
+                          name="description"
+                          type="text"
+                          value={editFormData.description}
+                          onChange={handleEditFormChange}
+                          required
+                          className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      <button
+                        type="submit"
+                        disabled={isSaving}
+                        className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                      >
+                        {isSaving ? 'Saving...' : 'Update Category'}
+                      </button>
                       <button
                         type="button"
-                        onClick={(event) => {
-                          event.preventDefault()
-                          handleDeleteClick(category)
-                        }}
-                        disabled={deletingCategoryId === category.categoryId}
-                        aria-label={`Delete ${category.name}`}
-                        className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        onClick={handleCancelEdit}
+                        disabled={isSaving}
+                        className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="h-4 w-4"
-                          aria-hidden="true"
-                        >
-                          <path d="M3 6h18" />
-                          <path d="M8 6V4h8v2" />
-                          <path d="M19 6l-1 14H6L5 6" />
-                          <path d="M10 11v6" />
-                          <path d="M14 11v6" />
-                        </svg>
+                        Cancel
                       </button>
                     </div>
-                  </div>
+                  </form>
+                ) : (
+                  <a
+                    key={category.categoryId}
+                    href={`/categories/${category.categoryId}?name=${encodeURIComponent(category.name)}`}
+                    className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <h2 className="text-lg font-semibold text-slate-950">
+                        {category.name}
+                      </h2>
 
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    {category.description}
-                  </p>
-                </a>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.preventDefault()
+                            handleEditClick(category)
+                          }}
+                          aria-label={`Edit ${category.name}`}
+                          className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="h-4 w-4"
+                            aria-hidden="true"
+                          >
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                          </svg>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.preventDefault()
+                            handleDeleteClick(category)
+                          }}
+                          disabled={deletingCategoryId === category.categoryId}
+                          aria-label={`Delete ${category.name}`}
+                          className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="h-4 w-4"
+                            aria-hidden="true"
+                          >
+                            <path d="M3 6h18" />
+                            <path d="M8 6V4h8v2" />
+                            <path d="M19 6l-1 14H6L5 6" />
+                            <path d="M10 11v6" />
+                            <path d="M14 11v6" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      {category.description}
+                    </p>
+                  </a>
+                )
               ))}
             </div>
           ) : (

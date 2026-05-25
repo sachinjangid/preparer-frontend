@@ -18,6 +18,7 @@ function CategoryQuestions({ categoryId }) {
   const categoryName = new URLSearchParams(window.location.search).get('name')
   const [questions, setQuestions] = useState([])
   const [question, setQuestion] = useState('')
+  const [editQuestion, setEditQuestion] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -70,25 +71,16 @@ function CategoryQuestions({ categoryId }) {
     setStatus({ type: '', message: '' })
 
     try {
-      if (editingQuestionId) {
-        await updateQuestion(categoryId, editingQuestionId, {
-          question,
-        })
-      } else {
-        await createQuestion(categoryId, {
-          question,
-        })
-      }
+      await createQuestion(categoryId, {
+        question,
+      })
 
       setQuestion('')
-      setEditingQuestionId('')
       setIsFormOpen(false)
       await loadQuestions()
       setStatus({
         type: 'success',
-        message: editingQuestionId
-          ? 'Question updated successfully.'
-          : 'Question created successfully.',
+        message: 'Question created successfully.',
       })
     } catch (error) {
       setStatus({ type: 'error', message: error.message })
@@ -98,10 +90,38 @@ function CategoryQuestions({ categoryId }) {
   }
 
   function handleEditClick(questionItem) {
-    setQuestion(questionItem.question)
+    setEditQuestion(questionItem.question)
     setEditingQuestionId(questionItem.questionId)
     setStatus({ type: '', message: '' })
-    setIsFormOpen(true)
+    setIsFormOpen(false)
+  }
+
+  function handleCancelEdit() {
+    setEditQuestion('')
+    setEditingQuestionId('')
+  }
+
+  async function handleEditSubmit(event) {
+    event.preventDefault()
+    setIsSaving(true)
+    setStatus({ type: '', message: '' })
+
+    try {
+      await updateQuestion(categoryId, editingQuestionId, {
+        question: editQuestion,
+      })
+      setEditQuestion('')
+      setEditingQuestionId('')
+      await loadQuestions()
+      setStatus({
+        type: 'success',
+        message: 'Question updated successfully.',
+      })
+    } catch (error) {
+      setStatus({ type: 'error', message: error.message })
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   async function handleDeleteClick(questionItem) {
@@ -159,6 +179,7 @@ function CategoryQuestions({ categoryId }) {
               setStatus({ type: '', message: '' })
               setQuestion('')
               setEditingQuestionId('')
+              setEditQuestion('')
               setIsFormOpen(true)
             }}
             className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
@@ -173,7 +194,7 @@ function CategoryQuestions({ categoryId }) {
             className="mt-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
           >
             <h2 className="text-lg font-semibold text-slate-950">
-              {editingQuestionId ? 'Edit Question' : 'Create Question'}
+              Create Question
             </h2>
 
             <div className="mt-5">
@@ -200,17 +221,12 @@ function CategoryQuestions({ categoryId }) {
                 disabled={isSaving}
                 className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
               >
-                {isSaving
-                  ? 'Saving...'
-                  : editingQuestionId
-                    ? 'Update Question'
-                    : 'Create Question'}
+                {isSaving ? 'Saving...' : 'Create Question'}
               </button>
               <button
                 type="button"
                 onClick={() => {
                   setQuestion('')
-                  setEditingQuestionId('')
                   setIsFormOpen(false)
                 }}
                 disabled={isSaving}
@@ -244,76 +260,123 @@ function CategoryQuestions({ categoryId }) {
           questions.length > 0 ? (
             <div className="mt-8 space-y-4">
               {questions.map((questionItem, index) => (
-                <article
-                  key={questionItem.questionId}
-                  className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
-                >
-                  <div className="flex items-start justify-between gap-4">
+                editingQuestionId === questionItem.questionId ? (
+                  <form
+                    key={questionItem.questionId}
+                    onSubmit={handleEditSubmit}
+                    className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+                  >
                     <p className="text-sm font-medium text-slate-500">
                       Question {index + 1}
                     </p>
-
-                    <div className="flex items-center gap-2">
+                    <label
+                      htmlFor={`question-${questionItem.questionId}`}
+                      className="mt-4 block text-sm font-medium text-slate-700"
+                    >
+                      Question
+                    </label>
+                    <textarea
+                      id={`question-${questionItem.questionId}`}
+                      value={editQuestion}
+                      onChange={(event) => setEditQuestion(event.target.value)}
+                      required
+                      rows="4"
+                      className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                    />
+                    <div className="mt-5 flex flex-wrap gap-3">
                       <button
-                        type="button"
-                        onClick={() => handleEditClick(questionItem)}
-                        aria-label={`Edit question ${index + 1}`}
-                        className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+                        type="submit"
+                        disabled={isSaving}
+                        className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="h-4 w-4"
-                          aria-hidden="true"
-                        >
-                          <path d="M12 20h9" />
-                          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                        </svg>
+                        {isSaving ? 'Saving...' : 'Update Question'}
                       </button>
-
                       <button
                         type="button"
-                        onClick={() => handleDeleteClick(questionItem)}
-                        disabled={
-                          deletingQuestionId === questionItem.questionId
-                        }
-                        aria-label={`Delete question ${index + 1}`}
-                        className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        onClick={handleCancelEdit}
+                        disabled={isSaving}
+                        className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="h-4 w-4"
-                          aria-hidden="true"
-                        >
-                          <path d="M3 6h18" />
-                          <path d="M8 6V4h8v2" />
-                          <path d="M19 6l-1 14H6L5 6" />
-                          <path d="M10 11v6" />
-                          <path d="M14 11v6" />
-                        </svg>
+                        Cancel
                       </button>
                     </div>
-                  </div>
+                  </form>
+                ) : (
+                  <article
+                    key={questionItem.questionId}
+                    className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <p className="text-sm font-medium text-slate-500">
+                        Question {index + 1}
+                      </p>
 
-                  <h2 className="mt-2 text-lg font-semibold text-slate-950">
-                    {questionItem.question}
-                  </h2>
-                  <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500">
-                    <span>Created: {formatDate(questionItem.createdAt)}</span>
-                    <span>Updated: {formatDate(questionItem.updatedAt)}</span>
-                  </div>
-                </article>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleEditClick(questionItem)}
+                          aria-label={`Edit question ${index + 1}`}
+                          className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="h-4 w-4"
+                            aria-hidden="true"
+                          >
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                          </svg>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteClick(questionItem)}
+                          disabled={
+                            deletingQuestionId === questionItem.questionId
+                          }
+                          aria-label={`Delete question ${index + 1}`}
+                          className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="h-4 w-4"
+                            aria-hidden="true"
+                          >
+                            <path d="M3 6h18" />
+                            <path d="M8 6V4h8v2" />
+                            <path d="M19 6l-1 14H6L5 6" />
+                            <path d="M10 11v6" />
+                            <path d="M14 11v6" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    <h2 className="mt-2 text-lg font-semibold text-slate-950">
+                      {questionItem.question}
+                    </h2>
+                    <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500">
+                      <span>
+                        Created: {formatDate(questionItem.createdAt)}
+                      </span>
+                      <span>
+                        Updated: {formatDate(questionItem.updatedAt)}
+                      </span>
+                    </div>
+                  </article>
+                )
               ))}
             </div>
           ) : (
