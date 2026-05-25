@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
-import { createQuestion, getQuestionsByCategory } from '../api/question'
+import {
+  createQuestion,
+  deleteQuestion,
+  getQuestionsByCategory,
+  updateQuestion,
+} from '../api/question'
 import Navbar from '../components/Navbar'
 
 function formatDate(dateString) {
@@ -16,6 +21,8 @@ function CategoryQuestions({ categoryId }) {
   const [isLoading, setIsLoading] = useState(true)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [editingQuestionId, setEditingQuestionId] = useState('')
+  const [deletingQuestionId, setDeletingQuestionId] = useState('')
   const [status, setStatus] = useState({ type: '', message: '' })
 
   async function loadQuestions() {
@@ -63,17 +70,65 @@ function CategoryQuestions({ categoryId }) {
     setStatus({ type: '', message: '' })
 
     try {
-      await createQuestion(categoryId, {
-        question,
-      })
+      if (editingQuestionId) {
+        await updateQuestion(categoryId, editingQuestionId, {
+          question,
+        })
+      } else {
+        await createQuestion(categoryId, {
+          question,
+        })
+      }
+
       setQuestion('')
+      setEditingQuestionId('')
       setIsFormOpen(false)
       await loadQuestions()
-      setStatus({ type: 'success', message: 'Question created successfully.' })
+      setStatus({
+        type: 'success',
+        message: editingQuestionId
+          ? 'Question updated successfully.'
+          : 'Question created successfully.',
+      })
     } catch (error) {
       setStatus({ type: 'error', message: error.message })
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  function handleEditClick(questionItem) {
+    setQuestion(questionItem.question)
+    setEditingQuestionId(questionItem.questionId)
+    setStatus({ type: '', message: '' })
+    setIsFormOpen(true)
+  }
+
+  async function handleDeleteClick(questionItem) {
+    const shouldDelete = window.confirm(
+      `Delete this question? This cannot be undone.`,
+    )
+
+    if (!shouldDelete) {
+      return
+    }
+
+    setDeletingQuestionId(questionItem.questionId)
+    setStatus({ type: '', message: '' })
+
+    try {
+      await deleteQuestion(categoryId, questionItem.questionId)
+      setQuestions((currentQuestions) =>
+        currentQuestions.filter(
+          (currentQuestion) =>
+            currentQuestion.questionId !== questionItem.questionId,
+        ),
+      )
+      setStatus({ type: 'success', message: 'Question deleted successfully.' })
+    } catch (error) {
+      setStatus({ type: 'error', message: error.message })
+    } finally {
+      setDeletingQuestionId('')
     }
   }
 
@@ -102,6 +157,8 @@ function CategoryQuestions({ categoryId }) {
             type="button"
             onClick={() => {
               setStatus({ type: '', message: '' })
+              setQuestion('')
+              setEditingQuestionId('')
               setIsFormOpen(true)
             }}
             className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
@@ -116,7 +173,7 @@ function CategoryQuestions({ categoryId }) {
             className="mt-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
           >
             <h2 className="text-lg font-semibold text-slate-950">
-              Create Question
+              {editingQuestionId ? 'Edit Question' : 'Create Question'}
             </h2>
 
             <div className="mt-5">
@@ -143,12 +200,17 @@ function CategoryQuestions({ categoryId }) {
                 disabled={isSaving}
                 className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
               >
-                {isSaving ? 'Saving...' : 'Create Question'}
+                {isSaving
+                  ? 'Saving...'
+                  : editingQuestionId
+                    ? 'Update Question'
+                    : 'Create Question'}
               </button>
               <button
                 type="button"
                 onClick={() => {
                   setQuestion('')
+                  setEditingQuestionId('')
                   setIsFormOpen(false)
                 }}
                 disabled={isSaving}
@@ -186,9 +248,64 @@ function CategoryQuestions({ categoryId }) {
                   key={questionItem.questionId}
                   className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
                 >
-                  <p className="text-sm font-medium text-slate-500">
-                    Question {index + 1}
-                  </p>
+                  <div className="flex items-start justify-between gap-4">
+                    <p className="text-sm font-medium text-slate-500">
+                      Question {index + 1}
+                    </p>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleEditClick(questionItem)}
+                        aria-label={`Edit question ${index + 1}`}
+                        className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="h-4 w-4"
+                          aria-hidden="true"
+                        >
+                          <path d="M12 20h9" />
+                          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                        </svg>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteClick(questionItem)}
+                        disabled={
+                          deletingQuestionId === questionItem.questionId
+                        }
+                        aria-label={`Delete question ${index + 1}`}
+                        className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="h-4 w-4"
+                          aria-hidden="true"
+                        >
+                          <path d="M3 6h18" />
+                          <path d="M8 6V4h8v2" />
+                          <path d="M19 6l-1 14H6L5 6" />
+                          <path d="M10 11v6" />
+                          <path d="M14 11v6" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
                   <h2 className="mt-2 text-lg font-semibold text-slate-950">
                     {questionItem.question}
                   </h2>

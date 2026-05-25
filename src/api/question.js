@@ -16,3 +16,16 @@ export async function createQuestion(categoryId, questionDetails) {
     body: JSON.stringify(questionDetails),
   })
 }
+
+export async function updateQuestion(categoryId, questionId, questionDetails) {
+  return apiRequest(`/category/${categoryId}/question/${questionId}`, {
+    method: 'PUT',
+    body: JSON.stringify(questionDetails),
+  })
+}
+
+export async function deleteQuestion(categoryId, questionId) {
+  return apiRequest(`/category/${categoryId}/question/${questionId}`, {
+    method: 'DELETE',
+  })
+}
