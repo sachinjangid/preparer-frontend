@@ -1,27 +1,48 @@
 import { useState } from 'react'
-import { getRandomQuestion } from '../api/practice'
+import { getRandomQuestion, verifyAnswer } from '../api/practice'
 import Navbar from '../components/Navbar'
 
+function getQuestionRecord(questionData) {
+  return questionData?.question &&
+    typeof questionData.question === 'object' &&
+    !Array.isArray(questionData.question)
+    ? questionData.question
+    : questionData
+}
+
 function getQuestionText(questionData) {
-  return (
-    questionData?.question?.question ??
-    questionData?.question ??
-    questionData?.text ??
-    ''
-  )
+  const questionRecord = getQuestionRecord(questionData)
+
+  return questionRecord?.question ?? questionRecord?.text ?? ''
+}
+
+function renderFormattedText(text) {
+  return text.split('\n').map((line, lineIndex) => (
+    <span key={`${line}-${lineIndex}`}>
+      {line.split(/(\*\*[^*]+\*\*)/g).map((part, partIndex) =>
+        part.startsWith('**') && part.endsWith('**') ? (
+          <strong key={`${part}-${partIndex}`}>{part.slice(2, -2)}</strong>
+        ) : (
+          <span key={`${part}-${partIndex}`}>{part}</span>
+        ),
+      )}
+      {lineIndex < text.split('\n').length - 1 ? <br /> : null}
+    </span>
+  ))
 }
 
 function RandomPractice() {
   const [questionData, setQuestionData] = useState(null)
   const [answer, setAnswer] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isVerifying, setIsVerifying] = useState(false)
   const [error, setError] = useState('')
-  const [message, setMessage] = useState('')
+  const [verificationResponse, setVerificationResponse] = useState('')
 
   async function handleGetQuestion() {
     setIsLoading(true)
     setError('')
-    setMessage('')
+    setVerificationResponse('')
 
     try {
       const data = await getRandomQuestion()
@@ -34,8 +55,24 @@ function RandomPractice() {
     }
   }
 
-  function handleVerify() {
-    setMessage('Verification API will be connected once the endpoint is ready.')
+  async function handleVerify() {
+    const questionRecord = getQuestionRecord(questionData)
+
+    setIsVerifying(true)
+    setError('')
+    setVerificationResponse('')
+
+    try {
+      const data = await verifyAnswer({
+        ...questionRecord,
+        answer,
+      })
+      setVerificationResponse(data?.response ?? 'Answer verified.')
+    } catch (verifyError) {
+      setError(verifyError.message)
+    } finally {
+      setIsVerifying(false)
+    }
   }
 
   const questionText = getQuestionText(questionData)
@@ -100,9 +137,9 @@ function RandomPractice() {
               <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
                 {error}
               </p>
-            ) : message ? (
-              <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
-                {message}
+            ) : verificationResponse ? (
+              <p className="rounded-md border border-slate-200 bg-white px-4 py-3 text-left text-sm leading-6 text-slate-700 shadow-sm">
+                {renderFormattedText(verificationResponse)}
               </p>
             ) : (
               <div aria-hidden="true" />
@@ -113,10 +150,10 @@ function RandomPractice() {
                 <button
                   type="button"
                   onClick={handleVerify}
-                  disabled={!answer.trim() || isLoading}
+                  disabled={!answer.trim() || isLoading || isVerifying}
                   className="rounded-lg bg-slate-950 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
                 >
-                  Verify
+                  {isVerifying ? 'Verifying...' : 'Verify'}
                 </button>
                 <button
                   type="button"
