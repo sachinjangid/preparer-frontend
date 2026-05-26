@@ -35,90 +35,135 @@ function Register() {
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
 
-      <section className="mx-auto flex max-w-md flex-col px-4 py-16 sm:px-6">
-        <h1 className="text-3xl font-bold text-slate-950">Register</h1>
+      <section className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+            Build your recall system
+          </p>
+          <h1 className="mt-4 text-4xl font-bold leading-tight text-slate-950 sm:text-5xl">
+            Start preparing with structure from day one.
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-7 text-slate-600">
+            Create a private question bank, group questions by topic, and use
+            practice sessions to turn stored notes into active recall.
+          </p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-8 space-y-5 rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
-        >
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Name
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              autoComplete="name"
-              className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              autoComplete="email"
-              className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              autoComplete="new-password"
-              className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
-            />
-          </div>
-
-          {status.message ? (
-            <p
-              className={
-                status.type === 'success'
-                  ? 'text-sm font-medium text-emerald-700'
-                  : 'text-sm font-medium text-red-600'
-              }
-            >
-              {status.message}
+          <div className="mt-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-sm font-semibold text-slate-950">
+              What you get after signup
             </p>
-          ) : null}
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {[
+                'Category management',
+                'Question CRUD',
+                'Random practice',
+                'Answer verification',
+              ].map((item) => (
+                <div key={item} className="rounded-md bg-slate-50 p-3">
+                  <p className="text-sm text-slate-700">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
-          >
-            {isSubmitting ? 'Creating account...' : 'Register'}
-          </button>
-        </form>
+        <div className="mx-auto w-full max-w-md">
+          <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <h2 className="text-2xl font-bold text-slate-950">Register</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Create your account and open your dashboard.
+            </p>
+
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Name
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  autoComplete="name"
+                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  autoComplete="email"
+                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  autoComplete="new-password"
+                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                />
+              </div>
+
+              {status.message ? (
+                <p
+                  className={
+                    status.type === 'success'
+                      ? 'rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700'
+                      : 'rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700'
+                  }
+                >
+                  {status.message}
+                </p>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+              >
+                {isSubmitting ? 'Creating account...' : 'Create account'}
+              </button>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-slate-600">
+              Already have an account?{' '}
+              <a
+                href="/login"
+                className="font-semibold text-slate-950 transition hover:text-emerald-700"
+              >
+                Login
+              </a>
+            </p>
+          </div>
+        </div>
       </section>
     </main>
   )
