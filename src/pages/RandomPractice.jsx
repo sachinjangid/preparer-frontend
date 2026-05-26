@@ -1,5 +1,9 @@
 import { useState } from 'react'
-import { getRandomQuestion, verifyAnswer } from '../api/practice'
+import {
+  getRandomQuestion,
+  getRandomQuestionByCategory,
+  verifyAnswer,
+} from '../api/practice'
 import Navbar from '../components/Navbar'
 
 function getQuestionRecord(questionData) {
@@ -31,7 +35,7 @@ function renderFormattedText(text) {
   ))
 }
 
-function RandomPractice() {
+function RandomPractice({ categoryId = '', categoryName = '' }) {
   const [questionData, setQuestionData] = useState(null)
   const [answer, setAnswer] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -45,7 +49,9 @@ function RandomPractice() {
     setVerificationResponse('')
 
     try {
-      const data = await getRandomQuestion()
+      const data = categoryId
+        ? await getRandomQuestionByCategory(categoryId)
+        : await getRandomQuestion()
       setQuestionData(data)
       setAnswer('')
     } catch (loadError) {
@@ -83,10 +89,10 @@ function RandomPractice() {
 
       <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col px-4 py-10 sm:px-6 lg:px-8">
         <a
-          href="/practice"
+          href={categoryId ? '/practice/category' : '/practice'}
           className="text-sm font-medium text-slate-500 transition hover:text-slate-950"
         >
-          Back to practice
+          {categoryId ? 'Back to categories' : 'Back to practice'}
         </a>
 
         <div className="grid flex-1 place-items-center">
@@ -96,7 +102,7 @@ function RandomPractice() {
                 <div className="min-h-0 overflow-y-auto pr-2">
                   <div>
                     <p className="text-sm font-medium text-slate-500">
-                      Random Question
+                      {categoryName ? `${categoryName} Question` : 'Random Question'}
                     </p>
                     <h1 className="mt-3 whitespace-pre-wrap text-2xl font-bold leading-9 text-slate-950">
                       {questionText || 'Question loaded.'}

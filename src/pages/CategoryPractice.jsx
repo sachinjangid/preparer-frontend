@@ -63,9 +63,10 @@ function CategoryPractice() {
           categories.length > 0 ? (
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {categories.map((category) => (
-                <article
+                <a
                   key={category.categoryId}
-                  className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+                  href={`/practice/category/${category.categoryId}?name=${encodeURIComponent(category.name)}`}
+                  className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
                 >
                   <h2 className="text-lg font-semibold text-slate-950">
                     {category.name}
@@ -73,7 +74,7 @@ function CategoryPractice() {
                   <p className="mt-2 text-sm leading-6 text-slate-600">
                     {category.description}
                   </p>
-                </article>
+                </a>
               ))}
             </div>
           ) : (

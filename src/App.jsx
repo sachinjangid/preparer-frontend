@@ -67,6 +67,25 @@ function App() {
     return <CategoryPractice />
   }
 
+  if (path.startsWith('/practice/category/')) {
+    if (!hasToken) {
+      window.history.replaceState(null, '', '/login')
+      return <Login />
+    }
+
+    const categoryId = decodeURIComponent(
+      path.replace('/practice/category/', ''),
+    )
+    const categoryName = new URLSearchParams(window.location.search).get('name')
+
+    return (
+      <RandomPractice
+        categoryId={categoryId}
+        categoryName={categoryName ?? ''}
+      />
+    )
+  }
+
   if (path === '/categories') {
     if (!hasToken) {
       window.history.replaceState(null, '', '/login')
