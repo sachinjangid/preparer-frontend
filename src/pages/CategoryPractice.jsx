@@ -1,6 +1,37 @@
+import { useEffect, useState } from 'react'
+import { getAllCategories } from '../api/category'
 import Navbar from '../components/Navbar'
 
 function CategoryPractice() {
+  const [categories, setCategories] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let shouldUpdate = true
+
+    getAllCategories()
+      .then((categoryList) => {
+        if (shouldUpdate) {
+          setCategories(categoryList)
+        }
+      })
+      .catch((loadError) => {
+        if (shouldUpdate) {
+          setError(loadError.message)
+        }
+      })
+      .finally(() => {
+        if (shouldUpdate) {
+          setIsLoading(false)
+        }
+      })
+
+    return () => {
+      shouldUpdate = false
+    }
+  }, [])
+
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
@@ -15,6 +46,42 @@ function CategoryPractice() {
         <h1 className="mt-3 text-3xl font-bold text-slate-950">
           Practice with category
         </h1>
+
+        {isLoading ? (
+          <p className="mt-8 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+            Loading categories...
+          </p>
+        ) : null}
+
+        {error ? (
+          <p className="mt-8 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            {error}
+          </p>
+        ) : null}
+
+        {!isLoading && !error ? (
+          categories.length > 0 ? (
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {categories.map((category) => (
+                <article
+                  key={category.categoryId}
+                  className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+                >
+                  <h2 className="text-lg font-semibold text-slate-950">
+                    {category.name}
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    {category.description}
+                  </p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-8 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+              No categories found.
+            </p>
+          )
+        ) : null}
       </section>
     </main>
   )
