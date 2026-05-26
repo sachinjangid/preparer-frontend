@@ -115,8 +115,9 @@ function RandomPractice() {
                     id="answer"
                     value={answer}
                     onChange={(event) => setAnswer(event.target.value)}
+                    disabled={Boolean(verificationResponse) || isVerifying}
                     rows="5"
-                    className="mt-2 block w-full resize-none rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                    className="mt-2 block w-full resize-none rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200 disabled:bg-slate-50 disabled:text-slate-600"
                   />
                 </div>
               </div>
@@ -146,24 +147,40 @@ function RandomPractice() {
             )}
 
             {questionData ? (
-              <div className="flex flex-wrap justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleVerify}
-                  disabled={!answer.trim() || isLoading || isVerifying}
-                  className="rounded-lg bg-slate-950 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
-                >
-                  {isVerifying ? 'Verifying...' : 'Verify'}
-                </button>
+              isVerifying ? (
+                <div className="flex items-center justify-center gap-3 text-sm font-semibold text-slate-600">
+                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-slate-950" />
+                  Verifying answer...
+                </div>
+              ) : verificationResponse ? (
                 <button
                   type="button"
                   onClick={handleGetQuestion}
                   disabled={isLoading}
-                  className="rounded-lg border border-slate-300 bg-white px-6 py-3 text-base font-bold text-slate-800 shadow-sm transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="justify-self-center rounded-lg bg-slate-950 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
                 >
-                  {isLoading ? 'Loading...' : 'Skip Question'}
+                  {isLoading ? 'Loading...' : 'Next Question'}
                 </button>
-              </div>
+              ) : (
+                <div className="flex flex-wrap justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleVerify}
+                    disabled={!answer.trim() || isLoading}
+                    className="rounded-lg bg-slate-950 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                  >
+                    Verify
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleGetQuestion}
+                    disabled={isLoading}
+                    className="rounded-lg border border-slate-300 bg-white px-6 py-3 text-base font-bold text-slate-800 shadow-sm transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {isLoading ? 'Loading...' : 'Skip Question'}
+                  </button>
+                </div>
+              )
             ) : (
               <div aria-hidden="true" />
             )}
