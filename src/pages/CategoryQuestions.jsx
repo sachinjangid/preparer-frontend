@@ -13,6 +13,12 @@ const emptyGenerateForm = {
   difficulty: 'easy',
 }
 
+const emptyQuestionForm = {
+  question: '',
+  topic: '',
+  difficulty: 'easy',
+}
+
 function formatDate(dateString) {
   return new Intl.DateTimeFormat('en', {
     dateStyle: 'medium',
@@ -23,7 +29,7 @@ function formatDate(dateString) {
 function CategoryQuestions({ categoryId }) {
   const categoryName = new URLSearchParams(window.location.search).get('name')
   const [questions, setQuestions] = useState([])
-  const [question, setQuestion] = useState('')
+  const [questionForm, setQuestionForm] = useState(emptyQuestionForm)
   const [editQuestion, setEditQuestion] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -87,11 +93,9 @@ function CategoryQuestions({ categoryId }) {
     setStatus({ type: '', message: '' })
 
     try {
-      await createQuestion(categoryId, {
-        question,
-      })
+      await createQuestion(categoryId, questionForm)
 
-      setQuestion('')
+      setQuestionForm(emptyQuestionForm)
       setIsFormOpen(false)
       await loadQuestions()
       setStatus({
@@ -165,6 +169,8 @@ function CategoryQuestions({ categoryId }) {
     try {
       await createQuestion(categoryId, {
         question: generatedQuestion.question,
+        topic: generatedQuestion.topic ?? generateForm.topic,
+        difficulty: generatedQuestion.difficulty ?? generateForm.difficulty,
       })
       await loadQuestions()
       setStatus({
@@ -314,11 +320,18 @@ function CategoryQuestions({ categoryId }) {
                         Generated Question {generatedQuestionIndex + 1} of{' '}
                         {generatedQuestions.length}
                       </p>
-                      {currentGeneratedQuestion?.topic ? (
-                        <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
-                          {currentGeneratedQuestion.topic}
-                        </span>
-                      ) : null}
+                      <div className="flex flex-wrap gap-2">
+                        {currentGeneratedQuestion?.topic ? (
+                          <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
+                            {currentGeneratedQuestion.topic}
+                          </span>
+                        ) : null}
+                        {currentGeneratedQuestion?.difficulty ? (
+                          <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium capitalize text-slate-600">
+                            {currentGeneratedQuestion.difficulty}
+                          </span>
+                        ) : null}
+                      </div>
                     </div>
 
                     <h1 className="mt-3 whitespace-pre-wrap text-2xl font-bold leading-9 text-slate-950">
@@ -421,7 +434,7 @@ function CategoryQuestions({ categoryId }) {
               type="button"
               onClick={() => {
                 setStatus({ type: '', message: '' })
-                setQuestion('')
+                setQuestionForm(emptyQuestionForm)
                 setEditingQuestionId('')
                 setEditQuestion('')
                 setIsGenerateFormOpen(false)
@@ -460,12 +473,67 @@ function CategoryQuestions({ categoryId }) {
               <textarea
                 id="question"
                 name="question"
-                value={question}
-                onChange={(event) => setQuestion(event.target.value)}
+                value={questionForm.question}
+                onChange={(event) =>
+                  setQuestionForm((currentForm) => ({
+                    ...currentForm,
+                    question: event.target.value,
+                  }))
+                }
                 required
                 rows="4"
                 className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
               />
+            </div>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="question-topic"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Topic
+                </label>
+                <input
+                  id="question-topic"
+                  name="topic"
+                  type="text"
+                  value={questionForm.topic}
+                  onChange={(event) =>
+                    setQuestionForm((currentForm) => ({
+                      ...currentForm,
+                      topic: event.target.value,
+                    }))
+                  }
+                  required
+                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="question-difficulty"
+                  className="block text-sm font-medium text-slate-700"
+                >
+                  Difficulty
+                </label>
+                <select
+                  id="question-difficulty"
+                  name="difficulty"
+                  value={questionForm.difficulty}
+                  onChange={(event) =>
+                    setQuestionForm((currentForm) => ({
+                      ...currentForm,
+                      difficulty: event.target.value,
+                    }))
+                  }
+                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                >
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
             </div>
 
             <div className="mt-5 flex flex-wrap gap-3">
@@ -479,7 +547,7 @@ function CategoryQuestions({ categoryId }) {
               <button
                 type="button"
                 onClick={() => {
-                  setQuestion('')
+                  setQuestionForm(emptyQuestionForm)
                   setIsFormOpen(false)
                 }}
                 disabled={isSaving}
@@ -560,7 +628,6 @@ function CategoryQuestions({ categoryId }) {
                 </button>
               </div>
             </form>
-
           </section>
         ) : null}
 
@@ -693,6 +760,20 @@ function CategoryQuestions({ categoryId }) {
                     <h2 className="mt-2 whitespace-pre-wrap text-lg font-semibold text-slate-950">
                       {questionItem.question}
                     </h2>
+                    {questionItem.topic || questionItem.difficulty ? (
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {questionItem.topic ? (
+                          <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
+                            {questionItem.topic}
+                          </span>
+                        ) : null}
+                        {questionItem.difficulty ? (
+                          <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium capitalize text-slate-600">
+                            {questionItem.difficulty}
+                          </span>
+                        ) : null}
+                      </div>
+                    ) : null}
                     <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500">
                       <span>
                         Created: {formatDate(questionItem.createdAt)}
