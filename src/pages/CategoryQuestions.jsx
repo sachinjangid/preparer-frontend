@@ -17,6 +17,7 @@ const emptyQuestionForm = {
   question: '',
   topic: '',
   difficulty: 'easy',
+  check_related_questions: false,
 }
 
 function formatDate(dateString) {
@@ -24,6 +25,19 @@ function formatDate(dateString) {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(dateString))
+}
+
+function buildQuestionPayload(questionDetails) {
+  return {
+    question: questionDetails.question,
+    difficulty: questionDetails.difficulty,
+    ...(questionDetails.topic?.trim()
+      ? { topic: questionDetails.topic.trim() }
+      : {}),
+    ...(questionDetails.check_related_questions
+      ? { check_related_questions: true }
+      : {}),
+  }
 }
 
 function CategoryQuestions({ categoryId }) {
@@ -93,7 +107,7 @@ function CategoryQuestions({ categoryId }) {
     setStatus({ type: '', message: '' })
 
     try {
-      await createQuestion(categoryId, questionForm)
+      await createQuestion(categoryId, buildQuestionPayload(questionForm))
 
       setQuestionForm(emptyQuestionForm)
       setIsFormOpen(false)
@@ -156,7 +170,7 @@ function CategoryQuestions({ categoryId }) {
     await generateQuestionBatch()
   }
 
-  async function saveGeneratedQuestion() {
+  async function saveGeneratedQuestion({ checkRelatedQuestions = false } = {}) {
     const generatedQuestion = generatedQuestions[generatedQuestionIndex]
 
     if (!generatedQuestion?.question) {
@@ -167,27 +181,46 @@ function CategoryQuestions({ categoryId }) {
     setStatus({ type: '', message: '' })
 
     try {
-      await createQuestion(categoryId, {
-        question: generatedQuestion.question,
-        topic: generatedQuestion.topic ?? generateForm.topic,
-        difficulty: generatedQuestion.difficulty ?? generateForm.difficulty,
-      })
+      const data = await createQuestion(
+        categoryId,
+        buildQuestionPayload({
+          question: generatedQuestion.question,
+          topic: generatedQuestion.topic ?? generateForm.topic,
+          difficulty: generatedQuestion.difficulty ?? generateForm.difficulty,
+          check_related_questions: checkRelatedQuestions,
+        }),
+      )
       await loadQuestions()
       setStatus({
         type: 'success',
         message: 'Generated question saved successfully.',
       })
-      return true
+      return { data, savedIndex: generatedQuestionIndex }
     } catch (error) {
       setStatus({ type: 'error', message: error.message })
-      return false
+      return null
     } finally {
       setSavingGeneratedIndex(null)
     }
   }
 
+  async function showNextGeneratedQuestion(savedIndex = generatedQuestionIndex) {
+    if (savedIndex < generatedQuestions.length - 1) {
+      setGeneratedQuestionIndex(savedIndex + 1)
+      return
+    }
+
+    await generateQuestionBatch()
+  }
+
   async function handleSaveGeneratedQuestion() {
-    await saveGeneratedQuestion()
+    const result = await saveGeneratedQuestion()
+
+    if (!result) {
+      return
+    }
+
+    await showNextGeneratedQuestion(result.savedIndex)
   }
 
   async function handleSkipGeneratedQuestion() {
@@ -201,20 +234,13 @@ function CategoryQuestions({ categoryId }) {
   }
 
   async function handleSaveAndFindRelevantQuestions() {
-    const generatedTopic = currentGeneratedQuestion?.topic ?? generateForm.topic
-    const wasSaved = await saveGeneratedQuestion()
+    const result = await saveGeneratedQuestion({ checkRelatedQuestions: true })
 
-    if (!wasSaved) {
+    if (!result) {
       return
     }
 
-    const relevantQuestionDetails = {
-      ...generateForm,
-      topic: generatedTopic,
-    }
-
-    setGenerateForm(relevantQuestionDetails)
-    await generateQuestionBatch(relevantQuestionDetails)
+    await showNextGeneratedQuestion(result.savedIndex)
   }
 
   function handleEditClick(questionItem) {
@@ -505,7 +531,6 @@ function CategoryQuestions({ categoryId }) {
                       topic: event.target.value,
                     }))
                   }
-                  required
                   className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
                 />
               </div>
@@ -535,6 +560,21 @@ function CategoryQuestions({ categoryId }) {
                 </select>
               </div>
             </div>
+
+            <label className="mt-5 flex items-start gap-3 text-sm font-medium text-slate-700">
+              <input
+                type="checkbox"
+                checked={questionForm.check_related_questions}
+                onChange={(event) =>
+                  setQuestionForm((currentForm) => ({
+                    ...currentForm,
+                    check_related_questions: event.target.checked,
+                  }))
+                }
+                className="mt-0.5 h-4 w-4 rounded border-slate-300 text-slate-950 focus:ring-slate-200"
+              />
+              Check related questions
+            </label>
 
             <div className="mt-5 flex flex-wrap gap-3">
               <button
