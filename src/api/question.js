@@ -17,6 +17,15 @@ export async function createQuestion(categoryId, questionDetails) {
   })
 }
 
+export async function generateQuestions(categoryId, questionDetails) {
+  const data = await apiRequest(`/category/${categoryId}/question/generate`, {
+    method: 'POST',
+    body: JSON.stringify(questionDetails),
+  })
+
+  return data?.questions ?? []
+}
+
 export async function updateQuestion(categoryId, questionId, questionDetails) {
   return apiRequest(`/category/${categoryId}/question/${questionId}`, {
     method: 'PUT',
