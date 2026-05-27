@@ -40,6 +40,7 @@ function CategoryQuestions({ categoryId }) {
   const [generatedQuestions, setGeneratedQuestions] = useState([])
   const [generatedQuestionIndex, setGeneratedQuestionIndex] = useState(0)
   const [status, setStatus] = useState({ type: '', message: '' })
+  const currentGeneratedQuestion = generatedQuestions[generatedQuestionIndex]
 
   async function loadQuestions() {
     setIsLoading(true)
@@ -123,15 +124,14 @@ function CategoryQuestions({ categoryId }) {
     setGenerateForm((currentForm) => ({ ...currentForm, [name]: value }))
   }
 
-  async function handleGenerateSubmit(event) {
-    event.preventDefault()
+  async function generateQuestionBatch(questionDetails = generateForm) {
     setIsGenerating(true)
     setGeneratedQuestions([])
     setGeneratedQuestionIndex(0)
     setStatus({ type: '', message: '' })
 
     try {
-      const questionList = await generateQuestions(categoryId, generateForm)
+      const questionList = await generateQuestions(categoryId, questionDetails)
       setGeneratedQuestions(questionList)
 
       if (questionList.length === 0) {
@@ -147,11 +147,16 @@ function CategoryQuestions({ categoryId }) {
     }
   }
 
-  async function handleSaveGeneratedQuestion() {
+  async function handleGenerateSubmit(event) {
+    event.preventDefault()
+    await generateQuestionBatch()
+  }
+
+  async function saveGeneratedQuestion() {
     const generatedQuestion = generatedQuestions[generatedQuestionIndex]
 
     if (!generatedQuestion?.question) {
-      return
+      return false
     }
 
     setSavingGeneratedIndex(generatedQuestionIndex)
@@ -166,11 +171,44 @@ function CategoryQuestions({ categoryId }) {
         type: 'success',
         message: 'Generated question saved successfully.',
       })
+      return true
     } catch (error) {
       setStatus({ type: 'error', message: error.message })
+      return false
     } finally {
       setSavingGeneratedIndex(null)
     }
+  }
+
+  async function handleSaveGeneratedQuestion() {
+    await saveGeneratedQuestion()
+  }
+
+  async function handleSkipGeneratedQuestion() {
+    if (generatedQuestionIndex < generatedQuestions.length - 1) {
+      setGeneratedQuestionIndex((currentIndex) => currentIndex + 1)
+      setStatus({ type: '', message: '' })
+      return
+    }
+
+    await generateQuestionBatch()
+  }
+
+  async function handleSaveAndFindRelevantQuestions() {
+    const generatedTopic = currentGeneratedQuestion?.topic ?? generateForm.topic
+    const wasSaved = await saveGeneratedQuestion()
+
+    if (!wasSaved) {
+      return
+    }
+
+    const relevantQuestionDetails = {
+      ...generateForm,
+      topic: generatedTopic,
+    }
+
+    setGenerateForm(relevantQuestionDetails)
+    await generateQuestionBatch(relevantQuestionDetails)
   }
 
   function handleEditClick(questionItem) {
@@ -237,9 +275,129 @@ function CategoryQuestions({ categoryId }) {
     }
   }
 
+  if (generatedQuestions.length > 0) {
+    return (
+      <main className="min-h-screen bg-slate-50 text-slate-900">
+        <Navbar />
+
+        {isGenerating ? (
+          <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/70 px-4 text-center text-white backdrop-blur-sm">
+            <div>
+              <span className="mx-auto block h-10 w-10 animate-spin rounded-full border-4 border-white/40 border-t-white" />
+              <p className="mt-5 text-lg font-bold">
+                This process may take a few seconds. Please wait.
+              </p>
+            </div>
+          </div>
+        ) : null}
+
+        <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col px-4 py-10 sm:px-6 lg:px-8">
+          <button
+            type="button"
+            onClick={() => {
+              setGeneratedQuestions([])
+              setGeneratedQuestionIndex(0)
+              setStatus({ type: '', message: '' })
+            }}
+            className="w-fit text-sm font-medium text-slate-500 transition hover:text-slate-950"
+          >
+            Back to questions
+          </button>
+
+          <div className="grid flex-1 place-items-center">
+            <div className="grid w-full max-w-3xl grid-rows-[minmax(24rem,32rem)_auto_auto] gap-6 text-center">
+              <div className="grid min-h-0 gap-5 rounded-lg border border-slate-200 bg-white p-8 text-left shadow-sm">
+                <div className="min-h-0 overflow-y-auto pr-2">
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <p className="text-sm font-medium text-slate-500">
+                        Generated Question {generatedQuestionIndex + 1} of{' '}
+                        {generatedQuestions.length}
+                      </p>
+                      {currentGeneratedQuestion?.topic ? (
+                        <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
+                          {currentGeneratedQuestion.topic}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <h1 className="mt-3 whitespace-pre-wrap text-2xl font-bold leading-9 text-slate-950">
+                      {currentGeneratedQuestion?.question ??
+                        'Question generated.'}
+                    </h1>
+                  </div>
+                </div>
+              </div>
+
+              {status.message ? (
+                <p
+                  className={
+                    status.type === 'success'
+                      ? 'rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700'
+                      : 'rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700'
+                  }
+                >
+                  {status.message}
+                </p>
+              ) : (
+                <div aria-hidden="true" />
+              )}
+
+              <div className="flex flex-wrap justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleSkipGeneratedQuestion}
+                  disabled={isGenerating || savingGeneratedIndex !== null}
+                  className="rounded-lg border border-slate-300 bg-white px-6 py-3 text-base font-bold text-slate-800 shadow-sm transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  Skip Question
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveGeneratedQuestion}
+                  disabled={
+                    isGenerating ||
+                    savingGeneratedIndex === generatedQuestionIndex
+                  }
+                  className="rounded-lg bg-slate-950 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                >
+                  {savingGeneratedIndex === generatedQuestionIndex
+                    ? 'Saving...'
+                    : 'Save Question'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveAndFindRelevantQuestions}
+                  disabled={
+                    isGenerating ||
+                    savingGeneratedIndex === generatedQuestionIndex
+                  }
+                  className="rounded-lg bg-slate-950 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                >
+                  Save and Find Other relevant questions
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
+
+      {isGenerating ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/70 px-4 text-center text-white backdrop-blur-sm">
+          <div>
+            <span className="mx-auto block h-10 w-10 animate-spin rounded-full border-4 border-white/40 border-t-white" />
+            <p className="mt-5 text-lg font-bold">
+              This process may take a few seconds. Please wait.
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -403,67 +561,6 @@ function CategoryQuestions({ categoryId }) {
               </div>
             </form>
 
-            {generatedQuestions.length > 0 ? (
-              <article className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-5">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-sm font-medium text-slate-500">
-                    Generated Question {generatedQuestionIndex + 1} of{' '}
-                    {generatedQuestions.length}
-                  </p>
-                  {generatedQuestions[generatedQuestionIndex]?.topic ? (
-                    <span className="rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600">
-                      {generatedQuestions[generatedQuestionIndex].topic}
-                    </span>
-                  ) : null}
-                </div>
-
-                <h3 className="mt-3 whitespace-pre-wrap text-lg font-semibold text-slate-950">
-                  {generatedQuestions[generatedQuestionIndex]?.question}
-                </h3>
-
-                <div className="mt-5 flex flex-wrap gap-3">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setGeneratedQuestionIndex((currentIndex) =>
-                        Math.max(currentIndex - 1, 0),
-                      )
-                    }
-                    disabled={generatedQuestionIndex === 0}
-                    className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setGeneratedQuestionIndex((currentIndex) =>
-                        Math.min(
-                          currentIndex + 1,
-                          generatedQuestions.length - 1,
-                        ),
-                      )
-                    }
-                    disabled={
-                      generatedQuestionIndex === generatedQuestions.length - 1
-                    }
-                    className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSaveGeneratedQuestion}
-                    disabled={savingGeneratedIndex === generatedQuestionIndex}
-                    className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
-                  >
-                    {savingGeneratedIndex === generatedQuestionIndex
-                      ? 'Saving...'
-                      : 'Save Question'}
-                  </button>
-                </div>
-              </article>
-            ) : null}
           </section>
         ) : null}
 
