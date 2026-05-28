@@ -59,8 +59,16 @@ function CategoryQuestions({ categoryId }) {
   })
   const [generatedQuestions, setGeneratedQuestions] = useState([])
   const [generatedQuestionIndex, setGeneratedQuestionIndex] = useState(0)
+  const [skippedGeneratedQuestionIndexes, setSkippedGeneratedQuestionIndexes] =
+    useState([])
+  const [isGeneratedBatchComplete, setIsGeneratedBatchComplete] =
+    useState(false)
   const [status, setStatus] = useState({ type: '', message: '' })
   const currentGeneratedQuestion = generatedQuestions[generatedQuestionIndex]
+  const canGoBackToSkippedQuestion =
+    skippedGeneratedQuestionIndexes.length > 0 &&
+    !isGenerating &&
+    savingGeneratedIndex === null
 
   async function loadQuestions() {
     setIsLoading(true)
@@ -130,6 +138,8 @@ function CategoryQuestions({ categoryId }) {
     })
     setGeneratedQuestions([])
     setGeneratedQuestionIndex(0)
+    setSkippedGeneratedQuestionIndexes([])
+    setIsGeneratedBatchComplete(false)
     setEditingQuestionId('')
     setEditQuestion('')
     setIsFormOpen(false)
@@ -146,6 +156,8 @@ function CategoryQuestions({ categoryId }) {
     setIsGenerating(true)
     setGeneratedQuestions([])
     setGeneratedQuestionIndex(0)
+    setSkippedGeneratedQuestionIndexes([])
+    setIsGeneratedBatchComplete(false)
     setStatus({ type: '', message: '' })
 
     try {
@@ -204,13 +216,60 @@ function CategoryQuestions({ categoryId }) {
     }
   }
 
-  async function showNextGeneratedQuestion(savedIndex = generatedQuestionIndex) {
-    if (savedIndex < generatedQuestions.length - 1) {
-      setGeneratedQuestionIndex(savedIndex + 1)
+  function removeSavedGeneratedQuestion(savedIndex = generatedQuestionIndex) {
+    const nextGeneratedQuestions = generatedQuestions.filter(
+      (_, questionIndex) => questionIndex !== savedIndex,
+    )
+
+    setGeneratedQuestions(nextGeneratedQuestions)
+    setSkippedGeneratedQuestionIndexes((currentIndexes) =>
+      currentIndexes
+        .filter((questionIndex) => questionIndex !== savedIndex)
+        .map((questionIndex) =>
+          questionIndex > savedIndex ? questionIndex - 1 : questionIndex,
+        ),
+    )
+
+    if (
+      nextGeneratedQuestions.length === 0 ||
+      savedIndex >= generatedQuestions.length - 1
+    ) {
+      setGeneratedQuestionIndex(0)
+      finishGeneratedBatch()
       return
     }
 
-    await generateQuestionBatch()
+    setGeneratedQuestionIndex(
+      Math.min(savedIndex, nextGeneratedQuestions.length - 1),
+    )
+    setIsGeneratedBatchComplete(false)
+  }
+
+  function finishGeneratedBatch() {
+    setIsGeneratedBatchComplete(true)
+  }
+
+  function handleBackToSkippedQuestion() {
+    setSkippedGeneratedQuestionIndexes((currentIndexes) => {
+      if (currentIndexes.length === 0) {
+        return currentIndexes
+      }
+
+      const previousIndex = currentIndexes[currentIndexes.length - 1]
+      setGeneratedQuestionIndex(previousIndex)
+      setIsGeneratedBatchComplete(false)
+      setStatus({ type: '', message: '' })
+
+      return currentIndexes.slice(0, -1)
+    })
+  }
+
+  function handleCloseGeneratedQuestions() {
+    setGeneratedQuestions([])
+    setGeneratedQuestionIndex(0)
+    setSkippedGeneratedQuestionIndexes([])
+    setIsGeneratedBatchComplete(false)
+    setStatus({ type: '', message: '' })
   }
 
   async function handleSaveGeneratedQuestion() {
@@ -220,17 +279,22 @@ function CategoryQuestions({ categoryId }) {
       return
     }
 
-    await showNextGeneratedQuestion(result.savedIndex)
+    removeSavedGeneratedQuestion(result.savedIndex)
   }
 
   async function handleSkipGeneratedQuestion() {
+    setSkippedGeneratedQuestionIndexes((currentIndexes) => [
+      ...currentIndexes,
+      generatedQuestionIndex,
+    ])
+
     if (generatedQuestionIndex < generatedQuestions.length - 1) {
       setGeneratedQuestionIndex((currentIndex) => currentIndex + 1)
       setStatus({ type: '', message: '' })
       return
     }
 
-    await generateQuestionBatch()
+    finishGeneratedBatch()
   }
 
   async function handleSaveAndFindRelevantQuestions() {
@@ -240,7 +304,7 @@ function CategoryQuestions({ categoryId }) {
       return
     }
 
-    await showNextGeneratedQuestion(result.savedIndex)
+    removeSavedGeneratedQuestion(result.savedIndex)
   }
 
   function handleEditClick(questionItem) {
@@ -307,7 +371,7 @@ function CategoryQuestions({ categoryId }) {
     }
   }
 
-  if (generatedQuestions.length > 0) {
+  if (generatedQuestions.length > 0 || isGeneratedBatchComplete) {
     return (
       <main className="apple-page">
         <Navbar />
@@ -326,26 +390,56 @@ function CategoryQuestions({ categoryId }) {
         <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col px-4 py-10 sm:px-6 lg:px-8">
           <button
             type="button"
-            onClick={() => {
-              setGeneratedQuestions([])
-              setGeneratedQuestionIndex(0)
-              setStatus({ type: '', message: '' })
-            }}
+            onClick={handleCloseGeneratedQuestions}
             className="w-fit text-sm font-medium text-slate-500 transition hover:text-slate-950"
           >
             Back to questions
           </button>
+
+          {isGeneratedBatchComplete ? (
+            <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/45 px-4 backdrop-blur-xl">
+              <div className="apple-panel w-full max-w-lg text-center">
+                <p className="apple-eyebrow">Generated set complete</p>
+                <h2 className="mt-3 text-3xl font-semibold text-slate-950">
+                  You have reviewed all generated questions.
+                </h2>
+                <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-slate-600">
+                  Generate a fresh set, move into practice, or return to your
+                  saved question list.
+                </p>
+
+                <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                  <button
+                    type="button"
+                    onClick={() => generateQuestionBatch()}
+                    className="apple-button-primary"
+                  >
+                    Generate More Questions
+                  </button>
+                  <a
+                    href={`/practice/category/${categoryId}?name=${encodeURIComponent(categoryName ?? '')}`}
+                    className="apple-button-secondary"
+                  >
+                    Start Practice
+                  </a>
+                  <button
+                    type="button"
+                    onClick={handleCloseGeneratedQuestions}
+                    className="apple-button-secondary"
+                  >
+                    Go Back to Questions
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
 
           <div className="grid flex-1 place-items-center">
             <div className="grid w-full max-w-3xl grid-rows-[minmax(24rem,32rem)_auto_auto] gap-6 text-center">
               <div className="apple-panel grid min-h-0 gap-5 p-8 text-left">
                 <div className="min-h-0 overflow-y-auto pr-2">
                   <div>
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-slate-500">
-                        Generated Question {generatedQuestionIndex + 1} of{' '}
-                        {generatedQuestions.length}
-                      </p>
+                    <div className="flex flex-wrap items-center justify-end gap-3">
                       <div className="flex flex-wrap gap-2">
                         {currentGeneratedQuestion?.topic ? (
                           <span className="apple-chip">
@@ -383,6 +477,15 @@ function CategoryQuestions({ categoryId }) {
               )}
 
               <div className="flex flex-wrap justify-center gap-3">
+                {canGoBackToSkippedQuestion ? (
+                  <button
+                    type="button"
+                    onClick={handleBackToSkippedQuestion}
+                    className="apple-button-secondary text-base"
+                  >
+                    Back
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   onClick={handleSkipGeneratedQuestion}
