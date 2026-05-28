@@ -16,7 +16,7 @@ function Navbar() {
   }
 
   return (
-    <header className="border-b border-slate-200 bg-white/90 backdrop-blur">
+    <header className="apple-nav">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <a href="/" aria-label="Preparer" className="flex items-center">
           <img
@@ -31,7 +31,7 @@ function Navbar() {
             <a
               key={item.label}
               href={item.href}
-              className="text-sm font-medium text-slate-600 transition hover:text-slate-950"
+              className="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition duration-200 hover:bg-white/70 hover:text-slate-950"
             >
               {item.label}
             </a>
@@ -40,7 +40,7 @@ function Navbar() {
             <button
               type="button"
               onClick={handleLogout}
-              className="text-sm font-medium text-slate-600 transition hover:text-slate-950"
+              className="rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition duration-200 hover:bg-white/70 hover:text-slate-950"
             >
               Logout
             </button>

@@ -161,19 +161,19 @@ function Categories() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="apple-page">
       <Navbar />
 
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="apple-section">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <a
               href="/dashboard"
-              className="text-sm font-medium text-slate-500 transition hover:text-slate-950"
+              className="apple-link"
             >
               Back to dashboard
             </a>
-            <h1 className="mt-3 text-3xl font-bold text-slate-950">
+            <h1 className="apple-page-title">
               Categories
             </h1>
           </div>
@@ -181,7 +181,7 @@ function Categories() {
           <button
             type="button"
             onClick={handleCreateClick}
-            className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="apple-button-primary"
           >
             + Create New Category
           </button>
@@ -190,7 +190,7 @@ function Categories() {
         {isFormOpen ? (
           <form
             onSubmit={handleSubmit}
-            className="mt-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+            className="apple-panel mt-8"
           >
             <h2 className="text-lg font-semibold text-slate-950">
               Create Category
@@ -200,7 +200,7 @@ function Categories() {
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-slate-700"
+                  className="apple-label"
                 >
                   Name
                 </label>
@@ -211,14 +211,14 @@ function Categories() {
                   value={formData.name}
                   onChange={handleFormChange}
                   required
-                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                  className="apple-input"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="description"
-                  className="block text-sm font-medium text-slate-700"
+                  className="apple-label"
                 >
                   Description
                 </label>
@@ -229,7 +229,7 @@ function Categories() {
                   value={formData.description}
                   onChange={handleFormChange}
                   required
-                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                  className="apple-input"
                 />
               </div>
             </div>
@@ -238,7 +238,7 @@ function Categories() {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                className="apple-button-primary"
               >
                 {isSaving ? 'Saving...' : 'Create Category'}
               </button>
@@ -246,7 +246,7 @@ function Categories() {
                 type="button"
                 onClick={handleCancelForm}
                 disabled={isSaving}
-                className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+                className="apple-button-secondary"
               >
                 Cancel
               </button>
@@ -255,13 +255,13 @@ function Categories() {
         ) : null}
 
         {isLoading ? (
-          <p className="mt-8 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+          <p className="apple-panel mt-8 text-sm text-slate-600">
             Loading categories...
           </p>
         ) : null}
 
         {error ? (
-          <p className="mt-8 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          <p className="apple-status-error mt-8">
             {error}
           </p>
         ) : null}
@@ -274,7 +274,7 @@ function Categories() {
                   <form
                     key={category.categoryId}
                     onSubmit={handleEditSubmit}
-                    className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+                    className="apple-panel"
                   >
                     <h2 className="text-lg font-semibold text-slate-950">
                       Edit Category
@@ -284,7 +284,7 @@ function Categories() {
                       <div>
                         <label
                           htmlFor={`category-name-${category.categoryId}`}
-                          className="block text-sm font-medium text-slate-700"
+                          className="apple-label"
                         >
                           Name
                         </label>
@@ -295,14 +295,14 @@ function Categories() {
                           value={editFormData.name}
                           onChange={handleEditFormChange}
                           required
-                          className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                          className="apple-input"
                         />
                       </div>
 
                       <div>
                         <label
                           htmlFor={`category-description-${category.categoryId}`}
-                          className="block text-sm font-medium text-slate-700"
+                          className="apple-label"
                         >
                           Description
                         </label>
@@ -313,7 +313,7 @@ function Categories() {
                           value={editFormData.description}
                           onChange={handleEditFormChange}
                           required
-                          className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                          className="apple-input"
                         />
                       </div>
                     </div>
@@ -322,7 +322,7 @@ function Categories() {
                       <button
                         type="submit"
                         disabled={isSaving}
-                        className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                        className="apple-button-primary"
                       >
                         {isSaving ? 'Saving...' : 'Update Category'}
                       </button>
@@ -330,7 +330,7 @@ function Categories() {
                         type="button"
                         onClick={handleCancelEdit}
                         disabled={isSaving}
-                        className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+                        className="apple-button-secondary"
                       >
                         Cancel
                       </button>
@@ -340,7 +340,7 @@ function Categories() {
                   <a
                     key={category.categoryId}
                     href={`/categories/${category.categoryId}?name=${encodeURIComponent(category.name)}`}
-                    className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+                    className="apple-card"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <h2 className="text-lg font-semibold text-slate-950">
@@ -355,7 +355,7 @@ function Categories() {
                             handleEditClick(category)
                           }}
                           aria-label={`Edit ${category.name}`}
-                          className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+                          className="apple-icon-button"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -381,7 +381,7 @@ function Categories() {
                           }}
                           disabled={deletingCategoryId === category.categoryId}
                           aria-label={`Delete ${category.name}`}
-                          className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="apple-icon-button hover:bg-red-50 hover:text-red-600"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -412,7 +412,7 @@ function Categories() {
               ))}
             </div>
           ) : (
-            <p className="mt-8 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+            <p className="apple-panel mt-8 text-sm text-slate-600">
               No categories found.
             </p>
           )

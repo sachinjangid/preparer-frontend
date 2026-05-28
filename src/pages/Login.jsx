@@ -31,15 +31,15 @@ function Login() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="apple-page">
       <Navbar />
 
-      <section className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+      <section className="apple-hero-section lg:grid-cols-[0.95fr_1.05fr]">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+          <p className="apple-eyebrow">
             Welcome back
           </p>
-          <h1 className="mt-4 text-4xl font-bold leading-tight text-slate-950 sm:text-5xl">
+          <h1 className="apple-title mt-4">
             Continue your preparation loop.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-7 text-slate-600">
@@ -52,7 +52,7 @@ function Login() {
               (item) => (
                 <div
                   key={item}
-                  className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+                  className="rounded-[1.5rem] border border-white/70 bg-white/60 p-4 shadow-[0_16px_45px_rgba(15,23,42,0.07)] backdrop-blur-xl"
                 >
                   <p className="text-sm font-semibold text-slate-950">
                     {item}
@@ -64,8 +64,8 @@ function Login() {
         </div>
 
         <div className="mx-auto w-full max-w-md">
-          <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <h2 className="text-2xl font-bold text-slate-950">Login</h2>
+          <div className="apple-panel sm:p-8">
+            <h2 className="text-2xl font-semibold text-slate-950">Login</h2>
             <p className="mt-2 text-sm text-slate-600">
               Access your dashboard and resume practicing.
             </p>
@@ -74,7 +74,7 @@ function Login() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-slate-700"
+                  className="apple-label"
                 >
                   Email
                 </label>
@@ -86,14 +86,14 @@ function Login() {
                   onChange={handleChange}
                   required
                   autoComplete="email"
-                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                  className="apple-input"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-slate-700"
+                  className="apple-label"
                 >
                   Password
                 </label>
@@ -105,7 +105,7 @@ function Login() {
                   onChange={handleChange}
                   required
                   autoComplete="current-password"
-                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                  className="apple-input"
                 />
               </div>
 
@@ -113,8 +113,8 @@ function Login() {
                 <p
                   className={
                     status.type === 'success'
-                      ? 'rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700'
-                      : 'rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700'
+                      ? 'apple-status-success'
+                      : 'apple-status-error'
                   }
                 >
                   {status.message}
@@ -124,7 +124,7 @@ function Login() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                className="apple-button-primary w-full"
               >
                 {isSubmitting ? 'Logging in...' : 'Login'}
               </button>
@@ -134,7 +134,7 @@ function Login() {
               New to Preparer?{' '}
               <a
                 href="/register"
-                className="font-semibold text-slate-950 transition hover:text-emerald-700"
+                className="font-semibold text-slate-950 transition hover:text-slate-600"
               >
                 Create an account
               </a>

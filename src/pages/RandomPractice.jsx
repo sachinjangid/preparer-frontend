@@ -84,13 +84,13 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
   const questionText = getQuestionText(questionData)
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="apple-page">
       <Navbar />
 
       <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col px-4 py-10 sm:px-6 lg:px-8">
         <a
           href={categoryId ? '/practice/category' : '/practice'}
-          className="text-sm font-medium text-slate-500 transition hover:text-slate-950"
+          className="apple-link"
         >
           {categoryId ? 'Back to categories' : 'Back to practice'}
         </a>
@@ -98,7 +98,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
         <div className="grid flex-1 place-items-center">
           <div className="grid w-full max-w-3xl grid-rows-[minmax(24rem,32rem)_auto_auto] gap-6 text-center">
             {questionData ? (
-              <div className="grid min-h-0 gap-5 rounded-lg border border-slate-200 bg-white p-8 text-left shadow-sm">
+              <div className="apple-panel grid min-h-0 gap-5 p-8 text-left">
                 <div className="min-h-0 overflow-y-auto pr-2">
                   <div>
                     <p className="text-sm font-medium text-slate-500">
@@ -113,7 +113,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                 <div>
                   <label
                     htmlFor="answer"
-                    className="block text-sm font-medium text-slate-700"
+                    className="apple-label"
                   >
                     Your answer
                   </label>
@@ -123,7 +123,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                     onChange={(event) => setAnswer(event.target.value)}
                     disabled={Boolean(verificationResponse) || isVerifying}
                     rows="5"
-                    className="mt-2 block w-full resize-none rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200 disabled:bg-slate-50 disabled:text-slate-600"
+                    className="apple-input resize-none"
                   />
                 </div>
               </div>
@@ -133,7 +133,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                   type="button"
                   onClick={handleGetQuestion}
                   disabled={isLoading}
-                  className="rounded-lg bg-slate-950 px-10 py-5 text-lg font-bold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                  className="apple-button-primary px-10 py-5 text-lg"
                 >
                   {isLoading ? 'Loading...' : 'Start Practice'}
                 </button>
@@ -141,11 +141,11 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
             )}
 
             {error ? (
-              <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+              <p className="apple-status-error">
                 {error}
               </p>
             ) : verificationResponse ? (
-              <p className="rounded-md border border-slate-200 bg-white px-4 py-3 text-left text-sm leading-6 text-slate-700 shadow-sm">
+              <p className="apple-panel text-left text-sm leading-6 text-slate-700">
                 {renderFormattedText(verificationResponse)}
               </p>
             ) : (
@@ -163,7 +163,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                   type="button"
                   onClick={handleGetQuestion}
                   disabled={isLoading}
-                  className="justify-self-center rounded-lg bg-slate-950 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                  className="apple-button-primary justify-self-center text-base"
                 >
                   {isLoading ? 'Loading...' : 'Next Question'}
                 </button>
@@ -173,7 +173,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                     type="button"
                     onClick={handleVerify}
                     disabled={!answer.trim() || isLoading}
-                    className="rounded-lg bg-slate-950 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                    className="apple-button-primary text-base"
                   >
                     Verify
                   </button>
@@ -181,7 +181,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                     type="button"
                     onClick={handleGetQuestion}
                     disabled={isLoading}
-                    className="rounded-lg border border-slate-300 bg-white px-6 py-3 text-base font-bold text-slate-800 shadow-sm transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="apple-button-secondary text-base"
                   >
                     {isLoading ? 'Loading...' : 'Skip Question'}
                   </button>

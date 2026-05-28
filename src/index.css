@@ -3,11 +3,104 @@
 body {
   margin: 0;
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
     sans-serif;
-  background: #f8fafc;
+  background: #f5f5f7;
+  color: #111827;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
   box-sizing: border-box;
+}
+
+@layer components {
+  .apple-page {
+    @apply min-h-screen overflow-hidden bg-[linear-gradient(135deg,#fbfbfd_0%,#f5f5f7_42%,#eef3f8_100%)] text-slate-950;
+  }
+
+  .apple-section {
+    @apply mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8;
+  }
+
+  .apple-hero-section {
+    @apply mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 lg:px-8;
+  }
+
+  .apple-nav {
+    @apply sticky top-0 z-40 border-b border-white/60 bg-white/55 shadow-[0_18px_60px_rgba(15,23,42,0.06)] backdrop-blur-2xl;
+  }
+
+  .apple-card {
+    @apply rounded-[2rem] border border-white/70 bg-white/70 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.10)] backdrop-blur-2xl transition duration-300 ease-out hover:-translate-y-1 hover:bg-white/85 hover:shadow-[0_30px_90px_rgba(15,23,42,0.14)];
+  }
+
+  .apple-panel {
+    @apply rounded-[2rem] border border-white/70 bg-white/65 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.10)] backdrop-blur-2xl;
+  }
+
+  .apple-inner {
+    @apply rounded-[1.5rem] border border-white/70 bg-white/55 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_14px_40px_rgba(15,23,42,0.07)] backdrop-blur-xl;
+  }
+
+  .apple-button {
+    @apply inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold shadow-[0_14px_35px_rgba(15,23,42,0.12)] transition duration-300 ease-out hover:-translate-y-0.5 focus:outline-none focus:ring-4 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-55;
+  }
+
+  .apple-button-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_35px_rgba(15,23,42,0.12)] transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300 disabled:cursor-not-allowed disabled:translate-y-0 disabled:bg-slate-400 disabled:opacity-55;
+  }
+
+  .apple-button-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-white/70 bg-white/65 px-5 py-3 text-sm font-semibold text-slate-800 shadow-[0_14px_35px_rgba(15,23,42,0.12)] backdrop-blur-xl transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-4 focus:ring-slate-200 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-55;
+  }
+
+  .apple-link {
+    @apply text-sm font-semibold text-slate-500 transition duration-200 hover:text-slate-950;
+  }
+
+  .apple-input {
+    @apply mt-2 block w-full rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_10px_25px_rgba(15,23,42,0.05)] outline-none backdrop-blur-xl transition duration-200 placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-200 disabled:bg-white/40 disabled:text-slate-500;
+  }
+
+  .apple-label {
+    @apply block text-sm font-semibold text-slate-700;
+  }
+
+  .apple-eyebrow {
+    @apply text-sm font-semibold uppercase tracking-[0.18em] text-slate-500;
+  }
+
+  .apple-title {
+    @apply text-4xl font-semibold leading-tight tracking-normal text-slate-950 sm:text-5xl;
+  }
+
+  .apple-page-title {
+    @apply mt-3 text-4xl font-semibold tracking-normal text-slate-950;
+  }
+
+  .apple-muted {
+    @apply text-sm leading-6 text-slate-600;
+  }
+
+  .apple-chip {
+    @apply rounded-full border border-white/70 bg-white/65 px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur-xl;
+  }
+
+  .apple-status {
+    @apply rounded-2xl border px-4 py-3 text-sm font-semibold shadow-[0_14px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl;
+  }
+
+  .apple-status-success {
+    @apply rounded-2xl border border-emerald-200/70 bg-emerald-50/80 px-4 py-3 text-sm font-semibold text-emerald-700 shadow-[0_14px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl;
+  }
+
+  .apple-status-error {
+    @apply rounded-2xl border border-red-200/70 bg-red-50/80 px-4 py-3 text-sm font-semibold text-red-700 shadow-[0_14px_40px_rgba(15,23,42,0.06)] backdrop-blur-xl;
+  }
+
+  .apple-icon-button {
+    @apply rounded-full p-2 text-slate-500 transition duration-200 hover:bg-white/80 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-50;
+  }
 }

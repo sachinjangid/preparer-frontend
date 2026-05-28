@@ -309,7 +309,7 @@ function CategoryQuestions({ categoryId }) {
 
   if (generatedQuestions.length > 0) {
     return (
-      <main className="min-h-screen bg-slate-50 text-slate-900">
+      <main className="apple-page">
         <Navbar />
 
         {isGenerating ? (
@@ -338,7 +338,7 @@ function CategoryQuestions({ categoryId }) {
 
           <div className="grid flex-1 place-items-center">
             <div className="grid w-full max-w-3xl grid-rows-[minmax(24rem,32rem)_auto_auto] gap-6 text-center">
-              <div className="grid min-h-0 gap-5 rounded-lg border border-slate-200 bg-white p-8 text-left shadow-sm">
+              <div className="apple-panel grid min-h-0 gap-5 p-8 text-left">
                 <div className="min-h-0 overflow-y-auto pr-2">
                   <div>
                     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -348,12 +348,12 @@ function CategoryQuestions({ categoryId }) {
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {currentGeneratedQuestion?.topic ? (
-                          <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
+                          <span className="apple-chip">
                             {currentGeneratedQuestion.topic}
                           </span>
                         ) : null}
                         {currentGeneratedQuestion?.difficulty ? (
-                          <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium capitalize text-slate-600">
+                          <span className="apple-chip capitalize">
                             {currentGeneratedQuestion.difficulty}
                           </span>
                         ) : null}
@@ -372,8 +372,8 @@ function CategoryQuestions({ categoryId }) {
                 <p
                   className={
                     status.type === 'success'
-                      ? 'rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700'
-                      : 'rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700'
+                      ? 'apple-status-success'
+                      : 'apple-status-error'
                   }
                 >
                   {status.message}
@@ -387,7 +387,7 @@ function CategoryQuestions({ categoryId }) {
                   type="button"
                   onClick={handleSkipGeneratedQuestion}
                   disabled={isGenerating || savingGeneratedIndex !== null}
-                  className="rounded-lg border border-slate-300 bg-white px-6 py-3 text-base font-bold text-slate-800 shadow-sm transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="apple-button-secondary text-base"
                 >
                   Skip Question
                 </button>
@@ -398,7 +398,7 @@ function CategoryQuestions({ categoryId }) {
                     isGenerating ||
                     savingGeneratedIndex === generatedQuestionIndex
                   }
-                  className="rounded-lg bg-slate-950 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                  className="apple-button-primary text-base"
                 >
                   {savingGeneratedIndex === generatedQuestionIndex
                     ? 'Saving...'
@@ -411,7 +411,7 @@ function CategoryQuestions({ categoryId }) {
                     isGenerating ||
                     savingGeneratedIndex === generatedQuestionIndex
                   }
-                  className="rounded-lg bg-slate-950 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                  className="apple-button-primary text-base"
                 >
                   Save and Find Other relevant questions
                 </button>
@@ -424,7 +424,7 @@ function CategoryQuestions({ categoryId }) {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="apple-page">
       <Navbar />
 
       {isGenerating ? (
@@ -438,16 +438,16 @@ function CategoryQuestions({ categoryId }) {
         </div>
       ) : null}
 
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="apple-section">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <a
               href="/categories"
-              className="text-sm font-medium text-slate-500 transition hover:text-slate-950"
+              className="apple-link"
             >
               Back to categories
             </a>
-            <h1 className="mt-3 text-3xl font-bold text-slate-950">
+            <h1 className="apple-page-title">
               {categoryName ?? 'Questions'}
             </h1>
             <p className="mt-2 text-sm text-slate-500">
@@ -458,7 +458,7 @@ function CategoryQuestions({ categoryId }) {
           <div className="flex flex-wrap gap-3">
             <a
               href={`/practice/category/${categoryId}?name=${encodeURIComponent(categoryName ?? '')}`}
-              className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+              className="apple-button-secondary"
             >
               Start Practicing
             </a>
@@ -472,14 +472,14 @@ function CategoryQuestions({ categoryId }) {
                 setIsGenerateFormOpen(false)
                 setIsFormOpen(true)
               }}
-              className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+              className="apple-button-primary"
             >
               + Create New Question
             </button>
             <button
               type="button"
               onClick={handleGenerateClick}
-              className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+              className="apple-button-secondary"
             >
               Generate Questions
             </button>
@@ -489,7 +489,7 @@ function CategoryQuestions({ categoryId }) {
         {isFormOpen ? (
           <form
             onSubmit={handleSubmit}
-            className="mt-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+            className="apple-panel mt-8"
           >
             <h2 className="text-lg font-semibold text-slate-950">
               Create Question
@@ -498,7 +498,7 @@ function CategoryQuestions({ categoryId }) {
             <div className="mt-5">
               <label
                 htmlFor="question"
-                className="block text-sm font-medium text-slate-700"
+                className="apple-label"
               >
                 Question
               </label>
@@ -514,7 +514,7 @@ function CategoryQuestions({ categoryId }) {
                 }
                 required
                 rows="4"
-                className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                className="apple-input"
               />
             </div>
 
@@ -522,7 +522,7 @@ function CategoryQuestions({ categoryId }) {
               <div>
                 <label
                   htmlFor="question-topic"
-                  className="block text-sm font-medium text-slate-700"
+                  className="apple-label"
                 >
                   Topic
                 </label>
@@ -537,14 +537,14 @@ function CategoryQuestions({ categoryId }) {
                       topic: event.target.value,
                     }))
                   }
-                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                  className="apple-input"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="question-difficulty"
-                  className="block text-sm font-medium text-slate-700"
+                  className="apple-label"
                 >
                   Difficulty
                 </label>
@@ -558,7 +558,7 @@ function CategoryQuestions({ categoryId }) {
                       difficulty: event.target.value,
                     }))
                   }
-                  className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                  className="apple-input"
                 >
                   <option value="easy">Easy</option>
                   <option value="medium">Medium</option>
@@ -577,7 +577,7 @@ function CategoryQuestions({ categoryId }) {
                     check_related_questions: event.target.checked,
                   }))
                 }
-                className="mt-0.5 h-4 w-4 rounded border-slate-300 text-slate-950 focus:ring-slate-200"
+                className="mt-0.5 h-5 w-5 rounded-md border-white/70 bg-white/70 text-slate-950 shadow-sm focus:ring-slate-200"
               />
               Check related questions
             </label>
@@ -586,7 +586,7 @@ function CategoryQuestions({ categoryId }) {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                className="apple-button-primary"
               >
                 {isSaving ? 'Saving...' : 'Create Question'}
               </button>
@@ -597,7 +597,7 @@ function CategoryQuestions({ categoryId }) {
                   setIsFormOpen(false)
                 }}
                 disabled={isSaving}
-                className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+                className="apple-button-secondary"
               >
                 Cancel
               </button>
@@ -606,7 +606,7 @@ function CategoryQuestions({ categoryId }) {
         ) : null}
 
         {isGenerateFormOpen ? (
-          <section className="mt-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <section className="apple-panel mt-8">
             <form onSubmit={handleGenerateSubmit}>
               <h2 className="text-lg font-semibold text-slate-950">
                 Generate Questions
@@ -616,7 +616,7 @@ function CategoryQuestions({ categoryId }) {
                 <div>
                   <label
                     htmlFor="generate-topic"
-                    className="block text-sm font-medium text-slate-700"
+                    className="apple-label"
                   >
                     Topic
                   </label>
@@ -627,14 +627,14 @@ function CategoryQuestions({ categoryId }) {
                     value={generateForm.topic}
                     onChange={handleGenerateFormChange}
                     required
-                    className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                    className="apple-input"
                   />
                 </div>
 
                 <div>
                   <label
                     htmlFor="generate-difficulty"
-                    className="block text-sm font-medium text-slate-700"
+                    className="apple-label"
                   >
                     Difficulty
                   </label>
@@ -643,7 +643,7 @@ function CategoryQuestions({ categoryId }) {
                     name="difficulty"
                     value={generateForm.difficulty}
                     onChange={handleGenerateFormChange}
-                    className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                    className="apple-input"
                   >
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>
@@ -656,7 +656,7 @@ function CategoryQuestions({ categoryId }) {
                 <button
                   type="submit"
                   disabled={isGenerating}
-                  className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                  className="apple-button-primary"
                 >
                   {isGenerating ? 'Generating...' : 'Generate Questions'}
                 </button>
@@ -668,7 +668,7 @@ function CategoryQuestions({ categoryId }) {
                     setGeneratedQuestionIndex(0)
                   }}
                   disabled={isGenerating}
-                  className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="apple-button-secondary"
                 >
                   Cancel
                 </button>
@@ -681,8 +681,8 @@ function CategoryQuestions({ categoryId }) {
           <p
             className={
               status.type === 'success'
-                ? 'mt-8 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700'
-                : 'mt-8 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700'
+                ? 'apple-status-success mt-8'
+                : 'apple-status-error mt-8'
             }
           >
             {status.message}
@@ -690,7 +690,7 @@ function CategoryQuestions({ categoryId }) {
         ) : null}
 
         {isLoading ? (
-          <p className="mt-8 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+          <p className="apple-panel mt-8 text-sm text-slate-600">
             Loading questions...
           </p>
         ) : null}
@@ -703,14 +703,14 @@ function CategoryQuestions({ categoryId }) {
                   <form
                     key={questionItem.questionId}
                     onSubmit={handleEditSubmit}
-                    className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+                    className="apple-panel"
                   >
                     <p className="text-sm font-medium text-slate-500">
                       Question {index + 1}
                     </p>
                     <label
                       htmlFor={`question-${questionItem.questionId}`}
-                      className="mt-4 block text-sm font-medium text-slate-700"
+                      className="apple-label mt-4"
                     >
                       Question
                     </label>
@@ -720,13 +720,13 @@ function CategoryQuestions({ categoryId }) {
                       onChange={(event) => setEditQuestion(event.target.value)}
                       required
                       rows="4"
-                      className="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-200"
+                      className="apple-input"
                     />
                     <div className="mt-5 flex flex-wrap gap-3">
                       <button
                         type="submit"
                         disabled={isSaving}
-                        className="rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+                        className="apple-button-primary"
                       >
                         {isSaving ? 'Saving...' : 'Update Question'}
                       </button>
@@ -734,7 +734,7 @@ function CategoryQuestions({ categoryId }) {
                         type="button"
                         onClick={handleCancelEdit}
                         disabled={isSaving}
-                        className="rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
+                        className="apple-button-secondary"
                       >
                         Cancel
                       </button>
@@ -743,7 +743,7 @@ function CategoryQuestions({ categoryId }) {
                 ) : (
                   <article
                     key={questionItem.questionId}
-                    className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+                    className="apple-panel"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <p className="text-sm font-medium text-slate-500">
@@ -755,7 +755,7 @@ function CategoryQuestions({ categoryId }) {
                           type="button"
                           onClick={() => handleEditClick(questionItem)}
                           aria-label={`Edit question ${index + 1}`}
-                          className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+                          className="apple-icon-button"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -780,7 +780,7 @@ function CategoryQuestions({ categoryId }) {
                             deletingQuestionId === questionItem.questionId
                           }
                           aria-label={`Delete question ${index + 1}`}
-                          className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="apple-icon-button hover:bg-red-50 hover:text-red-600"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -809,12 +809,12 @@ function CategoryQuestions({ categoryId }) {
                     {questionItem.topic || questionItem.difficulty ? (
                       <div className="mt-4 flex flex-wrap gap-2">
                         {questionItem.topic ? (
-                          <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
+                          <span className="apple-chip">
                             {questionItem.topic}
                           </span>
                         ) : null}
                         {questionItem.difficulty ? (
-                          <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium capitalize text-slate-600">
+                          <span className="apple-chip capitalize">
                             {questionItem.difficulty}
                           </span>
                         ) : null}
@@ -833,7 +833,7 @@ function CategoryQuestions({ categoryId }) {
               ))}
             </div>
           ) : (
-            <p className="mt-8 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+            <p className="apple-panel mt-8 text-sm text-slate-600">
               No questions found.
             </p>
           )

@@ -27,16 +27,16 @@ const steps = ['Create categories', 'Add questions', 'Practice', 'Verify answers
 
 function Home() {
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="apple-page">
       <Navbar />
 
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
+      <section>
+        <div className="apple-hero-section lg:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+            <p className="apple-eyebrow">
               Practice that remembers your weak spots
             </p>
-            <h1 className="mt-5 max-w-3xl text-5xl font-bold leading-tight text-slate-950 sm:text-6xl">
+            <h1 className="mt-5 max-w-3xl text-5xl font-semibold leading-tight tracking-normal text-slate-950 sm:text-6xl">
               Prepare smarter with your own question bank.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
@@ -48,21 +48,21 @@ function Home() {
             <div className="mt-8 flex flex-wrap gap-3">
               <a
                 href="/register"
-                className="rounded-md bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+                className="apple-button-primary"
               >
                 Start preparing
               </a>
               <a
                 href="/login"
-                className="rounded-md border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-100"
+                className="apple-button-secondary"
               >
                 Login
               </a>
             </div>
           </div>
 
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-5 shadow-sm">
-            <div className="rounded-md bg-white p-5 shadow-sm">
+          <div className="apple-panel">
+            <div className="apple-inner">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-medium text-slate-500">
@@ -72,12 +72,12 @@ function Home() {
                     Data Structures
                   </h2>
                 </div>
-                <span className="rounded-md bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
+                <span className="rounded-full bg-emerald-50/90 px-3 py-1 text-sm font-semibold text-emerald-700 shadow-sm">
                   Active
                 </span>
               </div>
 
-              <div className="mt-6 rounded-md border border-slate-200 p-4">
+              <div className="mt-6 rounded-[1.25rem] border border-white/70 bg-white/60 p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                   Random Question
                 </p>
@@ -87,7 +87,7 @@ function Home() {
                 </p>
               </div>
 
-              <div className="mt-4 rounded-md border border-slate-200 p-4">
+              <div className="mt-4 rounded-[1.25rem] border border-white/70 bg-white/60 p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                   Answer
                 </p>
@@ -100,11 +100,11 @@ function Home() {
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-3">
-              <div className="rounded-md bg-white p-4 shadow-sm">
+              <div className="rounded-[1.25rem] border border-white/70 bg-white/65 p-4 shadow-sm backdrop-blur-xl">
                 <p className="text-2xl font-bold text-slate-950">2</p>
                 <p className="text-sm text-slate-500">Practice modes</p>
               </div>
-              <div className="rounded-md bg-white p-4 shadow-sm">
+              <div className="rounded-[1.25rem] border border-white/70 bg-white/65 p-4 shadow-sm backdrop-blur-xl">
                 <p className="text-2xl font-bold text-slate-950">Voice</p>
                 <p className="text-sm text-slate-500">Answer input</p>
               </div>
@@ -113,12 +113,12 @@ function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+      <section className="apple-section py-16">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+          <p className="apple-eyebrow">
             Features
           </p>
-          <h2 className="mt-3 text-3xl font-bold text-slate-950">
+          <h2 className="mt-3 text-3xl font-semibold text-slate-950">
             Everything you need for active recall.
           </h2>
         </div>
@@ -127,7 +127,7 @@ function Home() {
           {features.map((feature) => (
             <article
               key={feature.title}
-              className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+              className="apple-card"
             >
               <h3 className="text-lg font-semibold text-slate-950">
                 {feature.title}
@@ -140,14 +140,14 @@ function Home() {
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-white">
+      <section className="border-y border-white/70 bg-white/35 backdrop-blur-xl">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+              <p className="apple-eyebrow">
                 Workflow
               </p>
-              <h2 className="mt-3 text-3xl font-bold text-slate-950">
+              <h2 className="mt-3 text-3xl font-semibold text-slate-950">
                 A simple loop for better recall.
               </h2>
               <p className="mt-4 text-sm leading-6 text-slate-600">
@@ -160,9 +160,9 @@ function Home() {
               {steps.map((step, index) => (
                 <div
                   key={step}
-                  className="rounded-lg border border-slate-200 bg-slate-50 p-4"
+                  className="rounded-[1.5rem] border border-white/70 bg-white/60 p-4 shadow-[0_16px_45px_rgba(15,23,42,0.07)] backdrop-blur-xl"
                 >
-                  <p className="text-sm font-bold text-emerald-700">
+                  <p className="text-sm font-bold text-slate-500">
                     0{index + 1}
                   </p>
                   <p className="mt-3 text-sm font-semibold text-slate-950">
@@ -175,9 +175,9 @@ function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="rounded-lg bg-slate-950 px-6 py-10 text-center text-white sm:px-10">
-          <h2 className="text-3xl font-bold">Ready to practice with focus?</h2>
+      <section className="apple-section py-16">
+        <div className="rounded-[2rem] bg-slate-950/95 px-6 py-10 text-center text-white shadow-[0_28px_90px_rgba(15,23,42,0.22)] sm:px-10">
+          <h2 className="text-3xl font-semibold">Ready to practice with focus?</h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-slate-300">
             Build your question bank once, then use random practice, category
             practice, voice answers, and verification feedback whenever you sit
@@ -186,7 +186,7 @@ function Home() {
           <div className="mt-7 flex justify-center">
             <a
               href="/register"
-              className="rounded-md bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+              className="apple-button-secondary bg-white text-slate-950"
             >
               Create your account
             </a>

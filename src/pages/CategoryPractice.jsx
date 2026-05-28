@@ -33,28 +33,28 @@ function CategoryPractice() {
   }, [])
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="apple-page">
       <Navbar />
 
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="apple-section">
         <a
           href="/practice"
-          className="text-sm font-medium text-slate-500 transition hover:text-slate-950"
+          className="apple-link"
         >
           Back to practice
         </a>
-        <h1 className="mt-3 text-3xl font-bold text-slate-950">
+        <h1 className="apple-page-title">
           Practice with category
         </h1>
 
         {isLoading ? (
-          <p className="mt-8 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+          <p className="apple-panel mt-8 text-sm text-slate-600">
             Loading categories...
           </p>
         ) : null}
 
         {error ? (
-          <p className="mt-8 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          <p className="apple-status-error mt-8">
             {error}
           </p>
         ) : null}
@@ -66,7 +66,7 @@ function CategoryPractice() {
                 <a
                   key={category.categoryId}
                   href={`/practice/category/${category.categoryId}?name=${encodeURIComponent(category.name)}`}
-                  className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+                  className="apple-card"
                 >
                   <h2 className="text-lg font-semibold text-slate-950">
                     {category.name}
@@ -78,7 +78,7 @@ function CategoryPractice() {
               ))}
             </div>
           ) : (
-            <p className="mt-8 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+            <p className="apple-panel mt-8 text-sm text-slate-600">
               No categories found.
             </p>
           )

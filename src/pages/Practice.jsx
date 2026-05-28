@@ -2,26 +2,26 @@ import Navbar from '../components/Navbar'
 
 function Practice() {
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="apple-page">
       <Navbar />
 
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="apple-section">
         <div>
           <a
             href="/dashboard"
-            className="text-sm font-medium text-slate-500 transition hover:text-slate-950"
+            className="apple-link"
           >
             Back to dashboard
           </a>
-          <h1 className="mt-3 text-3xl font-bold text-slate-950">Practice</h1>
+          <h1 className="apple-page-title">Practice</h1>
         </div>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
           <a
             href="/practice/random"
-            className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+            className="apple-card"
           >
-            <h2 className="text-2xl font-bold text-slate-950">
+            <h2 className="text-2xl font-semibold text-slate-950">
               Random Question
             </h2>
             <p className="mt-3 text-sm text-slate-600">
@@ -31,9 +31,9 @@ function Practice() {
 
           <a
             href="/practice/category"
-            className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+            className="apple-card"
           >
-            <h2 className="text-2xl font-bold text-slate-950">
+            <h2 className="text-2xl font-semibold text-slate-950">
               Practice with category
             </h2>
             <p className="mt-3 text-sm text-slate-600">
