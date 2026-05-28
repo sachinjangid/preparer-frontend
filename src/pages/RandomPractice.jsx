@@ -122,15 +122,15 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
         </a>
 
         <div className="grid flex-1 place-items-center">
-          <div className="grid w-full max-w-3xl grid-rows-[minmax(24rem,32rem)_auto_auto] gap-6 text-center">
+          <div className="grid w-full max-w-3xl grid-rows-[minmax(20rem,32rem)_auto_auto] gap-5 text-center sm:gap-6">
             {questionData ? (
-              <div className="apple-panel grid min-h-0 gap-5 p-8 text-left">
+              <div className="apple-panel grid min-h-0 gap-5 p-5 text-left sm:p-8">
                 <div className="min-h-0 overflow-y-auto pr-2">
                   <div>
                     <p className="text-sm font-medium text-slate-500">
                       {categoryName ? `${categoryName} Question` : 'Random Question'}
                     </p>
-                    <h1 className="mt-3 whitespace-pre-wrap text-2xl font-bold leading-9 text-slate-950">
+                    <h1 className="mt-3 whitespace-pre-wrap text-xl font-semibold leading-8 text-slate-950 sm:text-2xl sm:font-bold sm:leading-9">
                       {questionText || 'Question loaded.'}
                     </h1>
                   </div>
@@ -165,7 +165,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                   type="button"
                   onClick={handleGetQuestion}
                   disabled={isLoading}
-                  className="apple-button-primary px-10 py-5 text-lg"
+                  className="apple-button-primary px-8 py-4 text-base sm:px-10 sm:py-5 sm:text-lg"
                 >
                   {isLoading ? 'Loading...' : 'Start Practice'}
                 </button>
@@ -202,7 +202,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                   type="button"
                   onClick={handleGetQuestion}
                   disabled={isLoading}
-                  className="apple-button-primary justify-self-center text-base"
+                  className="apple-button-primary justify-self-center text-sm sm:text-base"
                 >
                   {isLoading ? 'Loading...' : 'Next Question'}
                 </button>
@@ -212,7 +212,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                     type="button"
                     onClick={handleVerify}
                     disabled={!answer.trim() || isLoading}
-                    className="apple-button-primary text-base"
+                    className="apple-button-primary text-sm sm:text-base"
                   >
                     Verify
                   </button>
@@ -220,7 +220,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                     type="button"
                     onClick={handleGetAnswer}
                     disabled={isLoading}
-                    className="apple-button-secondary text-base"
+                    className="apple-button-secondary text-sm sm:text-base"
                   >
                     Get Answer
                   </button>
@@ -228,7 +228,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                     type="button"
                     onClick={handleGetQuestion}
                     disabled={isLoading}
-                    className="apple-button-secondary text-base"
+                    className="apple-button-secondary text-sm sm:text-base"
                   >
                     {isLoading ? 'Loading...' : 'Skip Question'}
                   </button>

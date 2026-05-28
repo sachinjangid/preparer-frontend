@@ -435,8 +435,8 @@ function CategoryQuestions({ categoryId }) {
           ) : null}
 
           <div className="grid flex-1 place-items-center">
-            <div className="grid w-full max-w-3xl grid-rows-[minmax(24rem,32rem)_auto_auto] gap-6 text-center">
-              <div className="apple-panel grid min-h-0 gap-5 p-8 text-left">
+            <div className="grid w-full max-w-3xl grid-rows-[minmax(20rem,32rem)_auto_auto] gap-5 text-center sm:gap-6">
+              <div className="apple-panel grid min-h-0 gap-5 p-5 text-left sm:p-8">
                 <div className="min-h-0 overflow-y-auto pr-2">
                   <div>
                     <div className="flex flex-wrap items-center justify-end gap-3">
@@ -454,7 +454,7 @@ function CategoryQuestions({ categoryId }) {
                       </div>
                     </div>
 
-                    <h1 className="mt-3 whitespace-pre-wrap text-2xl font-bold leading-9 text-slate-950">
+                    <h1 className="mt-3 whitespace-pre-wrap text-xl font-semibold leading-8 text-slate-950 sm:text-2xl sm:font-bold sm:leading-9">
                       {currentGeneratedQuestion?.question ??
                         'Question generated.'}
                     </h1>
@@ -481,7 +481,7 @@ function CategoryQuestions({ categoryId }) {
                   <button
                     type="button"
                     onClick={handleBackToSkippedQuestion}
-                    className="apple-button-secondary text-base"
+                    className="apple-button-secondary text-sm sm:text-base"
                   >
                     Back
                   </button>
@@ -490,7 +490,7 @@ function CategoryQuestions({ categoryId }) {
                   type="button"
                   onClick={handleSkipGeneratedQuestion}
                   disabled={isGenerating || savingGeneratedIndex !== null}
-                  className="apple-button-secondary text-base"
+                  className="apple-button-secondary text-sm sm:text-base"
                 >
                   Skip Question
                 </button>
@@ -501,7 +501,7 @@ function CategoryQuestions({ categoryId }) {
                     isGenerating ||
                     savingGeneratedIndex === generatedQuestionIndex
                   }
-                  className="apple-button-primary text-base"
+                  className="apple-button-primary text-sm sm:text-base"
                 >
                   {savingGeneratedIndex === generatedQuestionIndex
                     ? 'Saving...'
@@ -514,7 +514,7 @@ function CategoryQuestions({ categoryId }) {
                     isGenerating ||
                     savingGeneratedIndex === generatedQuestionIndex
                   }
-                  className="apple-button-primary text-base"
+                  className="apple-button-primary text-sm sm:text-base"
                 >
                   Save and Find Other relevant questions
                 </button>
@@ -906,7 +906,7 @@ function CategoryQuestions({ categoryId }) {
                       </div>
                     </div>
 
-                    <h2 className="mt-2 whitespace-pre-wrap text-lg font-semibold text-slate-950">
+                    <h2 className="mt-2 whitespace-pre-wrap text-base font-semibold leading-7 text-slate-950 sm:text-lg">
                       {questionItem.question}
                     </h2>
                     {questionItem.topic || questionItem.difficulty ? (
