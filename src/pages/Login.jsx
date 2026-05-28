@@ -131,7 +131,7 @@ function Login() {
             </form>
 
             <p className="mt-6 text-center text-sm text-slate-600">
-              New to Preparer?{' '}
+              New to PractSmart?{' '}
               <a
                 href="/register"
                 className="font-semibold text-slate-950 transition hover:text-slate-600"

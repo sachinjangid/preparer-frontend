@@ -238,12 +238,10 @@ function Dashboard() {
       <div className="min-h-screen lg:grid lg:grid-cols-[17rem_1fr]">
         <aside className="border-b border-white/70 bg-white/55 px-4 py-4 shadow-[0_18px_60px_rgba(15,23,42,0.06)] backdrop-blur-2xl lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r lg:px-5 lg:py-6">
           <div className="flex items-center justify-between gap-4 lg:block">
-            <a href="/dashboard" aria-label="Preparer" className="block">
-              <img
-                src="/preparer-logo.png"
-                alt="Preparer"
-                className="h-20 w-auto lg:h-28"
-              />
+            <a href="/dashboard" aria-label="PractSmart" className="block">
+              <span className="italic font-black tracking-tight text-2xl text-slate-950 lg:text-3xl">
+                PractSmart
+              </span>
             </a>
 
             <button

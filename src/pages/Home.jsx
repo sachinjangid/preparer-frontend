@@ -40,7 +40,7 @@ function Home() {
               Prepare smarter with your own question bank.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-              Preparer helps you collect questions, organize them by category,
+              PractSmart helps you collect questions, organize them by category,
               practice randomly or by topic, and verify your answers after every
               attempt.
             </p>
@@ -151,7 +151,7 @@ function Home() {
                 A simple loop for better recall.
               </h2>
               <p className="mt-4 text-sm leading-6 text-slate-600">
-                Instead of only reading notes, Preparer keeps you answering,
+                Instead of only reading notes, PractSmart keeps you answering,
                 checking, and moving to the next question.
               </p>
             </div>

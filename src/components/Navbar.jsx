@@ -18,12 +18,10 @@ function Navbar() {
   return (
     <header className="apple-nav">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <a href="/" aria-label="Preparer" className="flex items-center">
-          <img
-            src="/preparer-logo.png"
-            alt="Preparer"
-            className="h-32 w-auto"
-          />
+        <a href="/" aria-label="PractSmart" className="flex items-center">
+          <span className="italic font-black tracking-tight text-2xl text-slate-950">
+            PractSmart
+          </span>
         </a>
 
         <div className="flex items-center gap-5">
