@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import {
+  getQuestionAnswer,
   getRandomQuestion,
   getRandomQuestionByCategory,
   verifyAnswer,
@@ -40,13 +41,16 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
   const [answer, setAnswer] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isVerifying, setIsVerifying] = useState(false)
+  const [isGettingAnswer, setIsGettingAnswer] = useState(false)
   const [error, setError] = useState('')
   const [verificationResponse, setVerificationResponse] = useState('')
+  const [suggestedAnswer, setSuggestedAnswer] = useState('')
 
   async function handleGetQuestion() {
     setIsLoading(true)
     setError('')
     setVerificationResponse('')
+    setSuggestedAnswer('')
 
     try {
       const data = categoryId
@@ -67,6 +71,7 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
     setIsVerifying(true)
     setError('')
     setVerificationResponse('')
+    setSuggestedAnswer('')
 
     try {
       const data = await verifyAnswer({
@@ -78,6 +83,27 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
       setError(verifyError.message)
     } finally {
       setIsVerifying(false)
+    }
+  }
+
+  async function handleGetAnswer() {
+    const questionRecord = getQuestionRecord(questionData)
+
+    setIsGettingAnswer(true)
+    setError('')
+    setVerificationResponse('')
+    setSuggestedAnswer('')
+
+    try {
+      const data = await getQuestionAnswer({
+        ...questionRecord,
+        ...(categoryId ? { categoryId } : {}),
+      })
+      setSuggestedAnswer(data?.response ?? 'Answer received.')
+    } catch (answerError) {
+      setError(answerError.message)
+    } finally {
+      setIsGettingAnswer(false)
     }
   }
 
@@ -110,22 +136,28 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                   </div>
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="answer"
-                    className="apple-label"
-                  >
-                    Your answer
-                  </label>
-                  <textarea
-                    id="answer"
-                    value={answer}
-                    onChange={(event) => setAnswer(event.target.value)}
-                    disabled={Boolean(verificationResponse) || isVerifying}
-                    rows="5"
-                    className="apple-input resize-none"
-                  />
-                </div>
+                {!suggestedAnswer ? (
+                  <div>
+                    <label
+                      htmlFor="answer"
+                      className="apple-label"
+                    >
+                      Your answer
+                    </label>
+                    <textarea
+                      id="answer"
+                      value={answer}
+                      onChange={(event) => setAnswer(event.target.value)}
+                      disabled={
+                        Boolean(verificationResponse) ||
+                        isVerifying ||
+                        isGettingAnswer
+                      }
+                      rows="5"
+                      className="apple-input resize-none"
+                    />
+                  </div>
+                ) : null}
               </div>
             ) : (
               <div className="flex items-center justify-center">
@@ -148,17 +180,24 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
               <p className="apple-panel text-left text-sm leading-6 text-slate-700">
                 {renderFormattedText(verificationResponse)}
               </p>
+            ) : suggestedAnswer ? (
+              <div className="apple-panel text-left text-sm leading-6 text-slate-700">
+                <p className="mb-3 text-sm font-semibold text-slate-950">
+                  Answer
+                </p>
+                <p>{renderFormattedText(suggestedAnswer)}</p>
+              </div>
             ) : (
               <div aria-hidden="true" />
             )}
 
             {questionData ? (
-              isVerifying ? (
+              isVerifying || isGettingAnswer ? (
                 <div className="flex items-center justify-center gap-3 text-sm font-semibold text-slate-600">
                   <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-slate-950" />
-                  Verifying answer...
+                  {isVerifying ? 'Verifying answer...' : 'Getting answer...'}
                 </div>
-              ) : verificationResponse ? (
+              ) : verificationResponse || suggestedAnswer ? (
                 <button
                   type="button"
                   onClick={handleGetQuestion}
@@ -176,6 +215,14 @@ function RandomPractice({ categoryId = '', categoryName = '' }) {
                     className="apple-button-primary text-base"
                   >
                     Verify
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleGetAnswer}
+                    disabled={isLoading}
+                    className="apple-button-secondary text-base"
+                  >
+                    Get Answer
                   </button>
                   <button
                     type="button"

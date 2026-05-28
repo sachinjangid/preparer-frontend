@@ -14,3 +14,10 @@ export async function verifyAnswer(answerDetails) {
     body: JSON.stringify(answerDetails),
   })
 }
+
+export async function getQuestionAnswer(questionDetails) {
+  return apiRequest('/practice/question/get-answer', {
+    method: 'POST',
+    body: JSON.stringify(questionDetails),
+  })
+}
