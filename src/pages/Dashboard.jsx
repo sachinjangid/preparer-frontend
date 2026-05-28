@@ -99,12 +99,13 @@ function DashboardLineChart({
         </p>
       </div>
 
-      <div className="overflow-x-auto pb-2">
+      <div className="pb-2">
         <svg
           viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+          preserveAspectRatio="none"
           role="img"
           aria-label={ariaLabel}
-          className={compact ? 'h-56 min-w-[52rem]' : 'h-72 min-w-[58rem]'}
+          className={compact ? 'h-44 w-full sm:h-56' : 'h-52 w-full sm:h-72'}
         >
           <defs>
             <linearGradient id={gradientId} x1="0" x2="0" y1="0" y2="1">
@@ -168,19 +169,27 @@ function DashboardLineChart({
                   className="opacity-0 animate-[fade-pop_0.35s_ease-out_forwards]"
                   style={{ animationDelay: `${index * 24}ms` }}
                 />
-                <text
-                  x={x}
-                  y={chartHeight - 18}
-                  fill="#64748b"
-                  fontSize="10"
-                  textAnchor="middle"
-                >
-                  {days[index].day}
-                </text>
+                {index % 5 === 0 || index === points.length - 1 ? (
+                  <text
+                    x={x}
+                    y={chartHeight - 18}
+                    fill="#64748b"
+                    fontSize="11"
+                    textAnchor="middle"
+                  >
+                    {days[index].day}
+                  </text>
+                ) : null}
               </g>
             )
           })}
         </svg>
+      </div>
+
+      <div className="mt-1 hidden grid-cols-[repeat(30,minmax(0,1fr))] text-center text-[10px] font-medium text-slate-400 sm:grid">
+        {days.map((day) => (
+          <span key={day.label}>{day.day}</span>
+        ))}
       </div>
     </div>
   )
@@ -294,13 +303,13 @@ function Dashboard() {
             </p>
           </div>
 
-          <section className="apple-panel mt-8">
+          <section className="apple-panel mt-8 p-4 sm:p-6">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-sm font-semibold text-slate-500">
                   Overall Practice Progress
                 </p>
-                <h2 className="mt-2 text-2xl font-semibold text-slate-950">
+                <h2 className="mt-2 text-xl font-semibold text-slate-950 sm:text-2xl">
                   Last 30 days
                 </h2>
               </div>
@@ -309,7 +318,7 @@ function Dashboard() {
               </p>
             </div>
 
-            <div className="mt-7">
+            <div className="mt-5 sm:mt-7">
               <DashboardLineChart
                 ariaLabel="overall-practice-progress"
                 color="#16a34a"
@@ -325,7 +334,7 @@ function Dashboard() {
                 <p className="text-sm font-semibold text-slate-500">
                   Category Wise Improvement
                 </p>
-                <h2 className="mt-2 text-2xl font-semibold text-slate-950">
+                <h2 className="mt-2 text-xl font-semibold text-slate-950 sm:text-2xl">
                   Separate 30-day trends
                 </h2>
               </div>
@@ -336,13 +345,13 @@ function Dashboard() {
 
             <div className="mt-6 grid gap-6 xl:grid-cols-2">
               {categorySeries.map((series) => (
-                <section key={series.id} className="apple-panel">
+                <section key={series.id} className="apple-panel p-4 sm:p-6">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-sm font-semibold text-slate-500">
                         Category
                       </p>
-                      <h3 className="mt-2 text-xl font-semibold text-slate-950">
+                      <h3 className="mt-2 text-lg font-semibold text-slate-950 sm:text-xl">
                         {series.name}
                       </h3>
                     </div>
@@ -354,7 +363,7 @@ function Dashboard() {
                     </span>
                   </div>
 
-                  <div className="mt-6">
+                  <div className="mt-4 sm:mt-6">
                     <DashboardLineChart
                       ariaLabel={`${series.name}-category-progress`}
                       color={series.color}
